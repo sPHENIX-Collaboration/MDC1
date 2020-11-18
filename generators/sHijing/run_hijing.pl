@@ -27,10 +27,10 @@ my $nseeds = keys %used_seed;
 my $segment = 0;
 foreach my $seed (keys %used_seed)
 {
-    my $condorlog = sprintf("%s/sHijing_0-12fm-%010d-%05d.log", $condorlogdir,$runnumber,$segment);
-    my $condorout = sprintf("%s/sHijing_0-12fm-%010d-%05d.out",$condoroutdir,$runnumber,$segment);
-    my $condorerr = sprintf("%s/sHijing_0-12fm-%010d-%05d.err",$condoroutdir,$runnumber,$segment);
-    my $datfile = sprintf("sHijing_0-12fm-%010d-%05d.dat",$runnumber, $segment);
+    my $condorlog = sprintf("%s/sHijing_0_12fm-%010d-%05d.log", $condorlogdir,$runnumber,$segment);
+    my $condorout = sprintf("%s/sHijing_0_12fm-%010d-%05d.out",$condoroutdir,$runnumber,$segment);
+    my $condorerr = sprintf("%s/sHijing_0_12fm-%010d-%05d.err",$condoroutdir,$runnumber,$segment);
+    my $datfile = sprintf("sHijing_0_12fm-%010d-%05d.dat",$runnumber, $segment);
     my $condorcmd = sprintf("condor_submit condor.job -a \"output = %s\" -a \"error = %s\"  -a \"Log = %s\" -a \"Arguments = %d %d %s %s\"",$condorout, $condorerr, $condorlog,$evt_per_file, $seed, $datfile, $outputdir);
     $segment++;
     if (! defined $submit)
