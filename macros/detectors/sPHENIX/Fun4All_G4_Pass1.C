@@ -3,20 +3,10 @@
 
 #include <GlobalVariables.C>
 
-#include <DisplayOn.C>
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
-#include <G4_CaloTrigger.C>
-#include <G4_DSTReader.C>
-#include <G4_Global.C>
-#include <G4_HIJetReco.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
-#include <G4_ParticleFlow.C>
 #include <G4_Production.C>
-#include <G4_TopoClusterReco.C>
-#include <G4_Tracking.C>
-#include <G4_User.C>
 
 #include <ffamodules/SyncReco.h>
 
@@ -63,7 +53,7 @@ int Fun4All_G4_Pass1(
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
-  Input::VERBOSITY = 0;
+  Input::VERBOSITY = 1; // so we get prinouts of the event number
   Input::HEPMC = true;
   
   INPUTHEPMC::filename = inputFile;
@@ -87,7 +77,7 @@ int Fun4All_G4_Pass1(
 
   if (Input::HEPMC)
   {
-    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(100e-4, 100e-4, 8, 0);  //optional collision smear in space, time
+    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(0.02, 0.02, 7.5, 0);  //collision vertex from CAD (sigma = 200um in x/y, 7.5cm in z)
                                                                                            //    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
     // //optional choice of vertex distribution function in space, time
     INPUTMANAGER::HepMCInputManager->set_vertex_distribution_function(PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus);
@@ -111,7 +101,7 @@ int Fun4All_G4_Pass1(
   se->registerSubsystem(sync);
 
   // set up production relatedstuff
-  //   Enable::PRODUCTION = true;
+    Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -138,65 +128,30 @@ int Fun4All_G4_Pass1(
 
   // central tracking
   Enable::MVTX = true;
-//  Enable::MVTX_CELL = Enable::MVTX && true;
-  Enable::MVTX_CLUSTER = Enable::MVTX_CELL && true;
 
   Enable::INTT = true;
-//  Enable::INTT_CELL = Enable::INTT && true;
-  Enable::INTT_CLUSTER = Enable::INTT_CELL && true;
 
   Enable::TPC = true;
-//  Enable::TPC_ABSORBER = true;
-//  Enable::TPC_CELL = Enable::TPC && true;
-  Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
 
   Enable::MICROMEGAS = true;
-//  Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS_CELL && true;
-
-//  Enable::TRACKING_TRACK = true;
-  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
 
   Enable::CEMC = true;
-//  Enable::CEMC_ABSORBER = true;
-//  Enable::CEMC_CELL = Enable::CEMC && true;
-  Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
-  Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-  Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && true;
 
   Enable::HCALIN = true;
-//  Enable::HCALIN_ABSORBER = true;
-//  Enable::HCALIN_CELL = Enable::HCALIN && true;
-  Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
-  Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-  Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && true;
 
   Enable::MAGNET = true;
-//  Enable::MAGNET_ABSORBER = true;
 
   Enable::HCALOUT = true;
-//  Enable::HCALOUT_ABSORBER = true;
-//  Enable::HCALOUT_CELL = Enable::HCALOUT && true;
-  Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
-  Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-  Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && true;
 
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
   Enable::PLUGDOOR = true;
-//  Enable::PLUGDOOR_ABSORBER = true;
-
-//  Enable::GLOBAL_RECO = true;
-  //  Enable::GLOBAL_FASTSIM = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
-
-  // run user provided code (from local G4_User.C)
-  //Enable::USER = true;
 
   //---------------
   // World Settings
