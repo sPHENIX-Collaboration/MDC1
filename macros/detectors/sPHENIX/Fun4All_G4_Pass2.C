@@ -79,13 +79,13 @@ int Fun4All_G4_Pass2(
   InputRegister();
 
   // set up production relatedstuff
-  //   Enable::PRODUCTION = true;
+   Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
   //======================
 
-//  Enable::DSTOUT = true;
+  Enable::DSTOUT = true;
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
@@ -301,22 +301,6 @@ int Fun4All_G4_Pass2(
     outputroot.erase(pos, remove_this.length());
   }
 
-  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_g4svtx_eval.root");
-
-  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_g4cemc_eval.root");
-
-  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_g4hcalin_eval.root");
-
-  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_g4hcalout_eval.root");
-
-  if (Enable::FEMC_EVAL) FEMC_Eval(outputroot + "_g4femc_eval.root");
-
-  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_g4jet_eval.root");
-
-  if (Enable::DSTREADER) G4DSTreader(outputroot + "_DSTReader.root");
-
-  if (Enable::USER) UserAnalysisInit();
-
   //--------------
   // Set up Input Managers
   //--------------
@@ -332,6 +316,20 @@ int Fun4All_G4_Pass2(
   {
     string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->StripNode("G4HIT_MVTX");
+    out->StripNode("G4HIT_INTT");
+    out->StripNode("G4HIT_TPC");
+    out->StripNode("G4HIT_MICROMEGAS");
+    out->StripNode("G4HIT_HCALIN");
+    out->StripNode("G4CELL_HCALIN");
+    out->StripNode("TOWER_SIM_HCALIN");
+    out->StripNode("G4HIT_HCALOUT");
+    out->StripNode("G4CELL_HCALOUT");
+    out->StripNode("TOWER_SIM_HCALOUT");
+    out->StripNode("PHHepMCGenEventMap");
+    out->StripNode("G4HIT_CEMC");
+    out->StripNode("G4CELL_CEMC");
+    out->StripNode("TOWER_SIM_CEMC");
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
   }
