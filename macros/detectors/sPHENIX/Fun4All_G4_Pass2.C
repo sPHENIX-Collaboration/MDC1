@@ -60,7 +60,7 @@ int Fun4All_G4_Pass2(
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
-  Input::VERBOSITY = 0;
+  Input::VERBOSITY = 1;
   // First enable the input generators
   // Either:
   // read previously generated g4-hits files, in this case it opens a DST and skips
