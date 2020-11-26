@@ -8,11 +8,14 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
+#include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllSyncManager.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -48,6 +51,18 @@ int Fun4All_G4_Pass1(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+// this extracts the runnumber and segment from the output filename
+// and sets this so the server can pick it up
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber=runseg.first;
+  int segment=runseg.second;
+  if (runnumber != 0)
+  {
+    rc->set_IntFlag("RUNNUMBER",runnumber);
+    Fun4AllSyncManager *syncman = se->getSyncManager();
+    syncman->SegmentNumber(segment);
+  }
 
   //===============
   // Input options
@@ -100,6 +115,9 @@ int Fun4All_G4_Pass1(
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
 
+  HeadReco *head = new HeadReco();
+  se->registerSubsystem(head);
+
   // set up production relatedstuff
     Enable::PRODUCTION = true;
 
@@ -121,10 +139,8 @@ int Fun4All_G4_Pass1(
   //  Enable::VERBOSITY = 1;
 
   Enable::BBC = true;
-//  Enable::BBCFAKE = true; // Smeared vtx and t0, use if you don't want real BBC in simulation
 
   Enable::PIPE = true;
-//  Enable::PIPE_ABSORBER = true;
 
   // central tracking
   Enable::MVTX = true;
@@ -150,6 +166,7 @@ int Fun4All_G4_Pass1(
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
+  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
