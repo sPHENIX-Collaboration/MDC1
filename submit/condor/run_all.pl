@@ -5,6 +5,8 @@ use warnings;
 use File::Path;
 use Getopt::Long;
 
+my $maxsubmit = 5000;
+
 my $runnumber = 1;
 my $events = 100;
 my $evtsperfile = 10000;
@@ -16,6 +18,7 @@ close(F);
 mkpath($outdir);
 my $test;
 GetOptions("test"=>\$test);
+my $nsubmit = 0;
 for (my $segment=0; $segment<1000; $segment++)
 {
     my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_12fm-%010d-%05d.dat",$runnumber, $segment);
@@ -44,6 +47,12 @@ for (my $segment=0; $segment<1000; $segment++)
 	    {
 		print "error from run_condor.pl\n";
 		exit($exit_value);
+	    }
+	    $nsubmit++;
+	    if ($nsubmit > $maxsubmit)
+	    {
+		print "maximum number of submissions reached, exiting\n";
+		exit(0);
 	    }
 	}
 	else
