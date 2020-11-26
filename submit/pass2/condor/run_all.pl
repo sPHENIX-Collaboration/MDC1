@@ -6,7 +6,7 @@ use File::Path;
 use File::Basename;
 use Getopt::Long;
 
-my $g4hitsdir = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/G4Hits";
+my $g4hitsdir = "/sphenix/data/data02/sphnxpro/MDC1/sHijing_HepMC/G4Hits";
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 my $events = 0;
