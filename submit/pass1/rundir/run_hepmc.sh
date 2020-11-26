@@ -1,5 +1,6 @@
 #!/usr/bin/bash
-source /opt/sphenix/core/bin/sphenix_setup.sh -n
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1
+
 # arguments 
 # $1: number of events
 # $2: hepmc input file
