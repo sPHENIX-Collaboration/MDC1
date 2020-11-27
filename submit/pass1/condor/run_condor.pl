@@ -37,7 +37,7 @@ mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, overlapping names, fix it and resubmit\n";
+    print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
 my $condorlogfile = sprintf("%s/condor-%s.log",$condorlogdir,$suffix);

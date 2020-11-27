@@ -5,8 +5,20 @@ use warnings;
 use File::Path;
 use Getopt::Long;
 
-my $maxsubmit = 5000;
+my $test;
+my $incremental;
+GetOptions("test"=>\$test, "increment"=>\$incremental);
+if ($#ARGV < 0)
+{
+    print "usage: run_all.pl <number of jobs>\n";
+    print "parameters:\n";
+    print "--increment : submit jobs while processing running\n";
+    print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
 
+
+my $maxsubmit = $ARGV[0];
 my $runnumber = 1;
 my $events = 100;
 my $evtsperfile = 10000;
@@ -16,8 +28,6 @@ my $outdir=<F>;
 chomp  $outdir;
 close(F);
 mkpath($outdir);
-my $test;
-GetOptions("test"=>\$test);
 my $nsubmit = 0;
 for (my $segment=0; $segment<1000; $segment++)
 {
@@ -45,10 +55,16 @@ for (my $segment=0; $segment<1000; $segment++)
 	    my $exit_value  = $? >> 8;
 	    if ($exit_value != 0)
 	    {
-		print "error from run_condor.pl\n";
-		exit($exit_value);
+		if (! defined $incremental)
+		{
+		    print "error from run_condor.pl\n";
+		    exit($exit_value);
+		}
 	    }
-	    $nsubmit++;
+	    else
+	    {
+		$nsubmit++;
+	    }
 	    if ($nsubmit > $maxsubmit)
 	    {
 		print "maximum number of submissions reached, exiting\n";
