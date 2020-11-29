@@ -44,7 +44,7 @@ open(F,"find $indir -maxdepth 1 -type f -name 'DST_TRKR_G4HIT*.root' | sort |");
 while (my $file = <F>)
 {
     chomp  $file;
-    my $truthin = $file;
+    my $truthfile = $file;
     $truthfile =~ s/DST_TRKR_G4HIT/DST_TRUTH_G4HIT/;
     if (! -f $truthfile)
     {
@@ -52,7 +52,6 @@ while (my $file = <F>)
 	next;
     }
     print "found $truthfile\n";
-    die;
     my $lfn = basename($file);
     print "found $file\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
@@ -66,9 +65,9 @@ while (my $file = <F>)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $file, $truthfile, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $file, $truthfile, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
-#	system($subcmd);
+	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{
