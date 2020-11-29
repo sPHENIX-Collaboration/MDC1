@@ -347,6 +347,7 @@ int Fun4All_G4_Calo(
 
   se->End();
   se->PrintTimer();
+  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
