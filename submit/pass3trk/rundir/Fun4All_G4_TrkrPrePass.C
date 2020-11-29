@@ -322,6 +322,8 @@ out->AddNode("AssocInfoContainer");
   //-----
 
   se->End();
+  se->PrintTimer();
+  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
