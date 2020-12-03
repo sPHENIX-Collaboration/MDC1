@@ -19,7 +19,7 @@ void Fun4All_G4_Analysis(
 // have to figure out what is in each dst type 
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0); // set it to 1 if you want event printouts
 
 // here you create and register your analysis module like:
 // MyModule *mod = new MyModule();
