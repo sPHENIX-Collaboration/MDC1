@@ -18,7 +18,7 @@ if ($#ARGV < 0)
 }
 
 my $maxcopy = $ARGV[0];
-my $nfiles = 100;
+my $nfiles = 1000;
 my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1";
 my $indirfile = "../condor/outdir.txt";
 if (! -f $indirfile)
