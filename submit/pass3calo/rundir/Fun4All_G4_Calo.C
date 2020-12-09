@@ -287,6 +287,8 @@ int Fun4All_G4_Calo(
   {
     string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->AddNode("Sync");
+    out->AddNode("EventHeader");
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
