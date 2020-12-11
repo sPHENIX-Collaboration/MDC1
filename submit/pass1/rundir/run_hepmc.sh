@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.1
 
 # arguments 
 # $1: number of events
