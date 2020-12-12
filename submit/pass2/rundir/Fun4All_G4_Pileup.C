@@ -5,6 +5,7 @@
 
 #include <G4_OutputManager_Pileup.C>
 #include <G4_Production.C>
+#include <G4_Global.C>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -37,6 +38,26 @@ int Fun4All_G4_Pileup(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
+
+  Enable::GLOBAL_FASTSIM = true;
+
+  //-----------------
+  // Global Vertexing
+  //-----------------
+
+  if (Enable::GLOBAL_RECO && Enable::GLOBAL_FASTSIM)
+  {
+    cout << "You can only enable Enable::GLOBAL_RECO or Enable::GLOBAL_FASTSIM, not both" << endl;
+    gSystem->Exit(1);
+  }
+  if (Enable::GLOBAL_RECO)
+  {
+    Global_Reco();
+  }
+  else if (Enable::GLOBAL_FASTSIM)
+  {
+    Global_FastSim();
+  }
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
