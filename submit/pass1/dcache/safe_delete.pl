@@ -3,6 +3,7 @@
 use File::Basename;
 use File::stat;
 use strict;
+use DBI;
 
 use Getopt::Long;
 
@@ -42,7 +43,9 @@ if (! defined $dokill)
     print "TestMode, use -kill to delete files for real\n";
 }
 
-
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $checkmd5 = $dbh->prepare("select lfn from files where lfn = ? and md5 is not null");
 open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
 while (my $file = <F>)
 {
@@ -55,8 +58,8 @@ while (my $file = <F>)
 	my $dcsize = stat($dcachefile)->size;
 	if ($dcsize == $origsize)
 	{
-	    my $okay = &checkdownstream($file);
-	    if ($okay == 0)
+	    $checkmd5->execute($lfn);
+	    if ($checkmd5->rows > 0)
 	    {
 		if (defined $dokill)
 		{
@@ -76,7 +79,7 @@ while (my $file = <F>)
 	    }
 	    else
 	    {
-		print "downstream files missing\n";
+		print "no md5 in file catalog for $file\n";
 	    }
 
 	    next;
@@ -91,6 +94,8 @@ while (my $file = <F>)
     }
 }
 close(F);
+$checkmd5->finish();
+$dbh->disconnect;
 
 sub checkdownstream
 {
