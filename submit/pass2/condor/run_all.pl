@@ -5,9 +5,9 @@ use warnings;
 use File::Path;
 use File::Basename;
 use Getopt::Long;
+use DBI;
 
 
-my $inevents = 100;
 my $outevents = 0;
 my $test;
 my $incremental;
@@ -31,30 +31,31 @@ my $outdir = `cat outdir.txt`;
 chomp $outdir;
 mkpath($outdir);
 
-my $indirfile = sprintf("../../pass1/condor/outdir.txt");
-if (! -f $indirfile)
-{
-    print "could not find file with input directory $indirfile\n";
-    exit(1);
-}
-my $indir = `cat $indirfile`;
-chomp $indir;
-
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
+$outfiletype{"DST_VERTEX"} = 1;
 
+my $localdir=`pwd`;
+chomp $localdir;
+my $logdir = sprintf("%s/log",$localdir);
+mkpath($logdir);
+
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_12fm%' order by filename") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
-open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort |");
-while (my $file = <F>)
+$getfiles->execute() || die $DBI::error;
+while (my @res = $getfiles->fetchrow_array())
 {
-    chomp  $file;
-    my $lfn = basename($file);
-    print "found $file\n";
+    my $lfn = $res[0];
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
+        my $prefix=$1;
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $foundall = 1;
@@ -64,20 +65,54 @@ while (my $file = <F>)
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
-		$foundall = 0;
-		last;
+		my $outlfn = basename($outfilename);
+		$chkfile->execute($outlfn);
+		if ($chkfile->rows > 0)
+		{
+		    next;
+		}
+		else
+		{
+		    $foundall = 0;
+		    last;
+		}
 	    }
 	}
 	if ($foundall == 1)
 	{
 	    next;
 	}
+# output file does not exist yet, check for 3 background files (n+1 to n+3)
+	$foundall = 1;
+	my @bkgfiles = ();
+	for (my $cnt = $segment+1; $cnt <=$segment+3; $cnt++)
+	{
+	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$cnt);
+	    $chkfile->execute($bckfile);
+	    if ($chkfile->rows == 0)
+	    {
+		$foundall = 0;
+		last;
+	    }
+	    push(@bkgfiles,$bckfile);
+	}
+	if ($foundall == 0)
+	{
+	    next;
+	}
+	my $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
+	open(F1,">$bkglistfile");
+	foreach my $bf (@bkgfiles)
+	{
+	    print F1 "$bf\n";
+	}
+	close(F1);
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %d %s %s %d %d %s",$inevents, $outevents, $file, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -100,4 +135,8 @@ while (my $file = <F>)
 	}
     }
 }
-close(F);
+
+
+$getfiles->finish();
+$chkfile->finish();
+$dbh->disconnect;
