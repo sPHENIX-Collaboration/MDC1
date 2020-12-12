@@ -58,7 +58,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = DstOut::OutputDir + "/" + "DST_FASTSIM_GLOBAL_VERTEX_sHijing_0_12fm-" + segrun + ".root";;
+  FullOutFile = DstOut::OutputDir + "/" + "DST_VERTEX_sHijing_0_12fm-" + segrun + ".root";;
   out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("GlobalVertexMap");
