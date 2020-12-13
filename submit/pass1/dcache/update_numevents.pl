@@ -6,6 +6,7 @@ use warnings;
 use File::Path;
 use File::Basename;
 
+sub getentries;
 #write stupid macro to get events
 open(F,">GetEntries.C");
 print F "#ifndef MACRO_GETENTRIES_C\n";
@@ -31,17 +32,64 @@ print F "}\n";
 print F "#endif\n";
 close(F);
 
+# first go over files in our gpfs output dir
+my $indirfile = "../condor/outdir.txt";
+if (! -f $indirfile)
+{
+    die "could not find $indirfile";
+}
+my $indir = `cat $indirfile`;
+chomp $indir;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $chkfile = $dbh->prepare("select events from datasets where filename = ?");
+my $updateevents =  $dbh->prepare("update datasets set events=? where filename=?") || die $DBI::error;
+
+open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
+while (my $file = <F>)
+{
+    chomp $file;
+    my $filename = basename($file);
+    $chkfile->execute($filename);
+    if ($chkfile->rows > 0)
+    {
+	my @res = $chkfile->fetchrow_array();
+	if ($res[0] < 0)
+	{
+	    my $entries = getentries($file);
+	    if ($entries >= 0)
+	    {
+		print "updating $filename with $entries\n";
+		$updateevents->execute($entries,$filename) || die $DBI::error;
+	    }
+	}
+    }
+}
+#die;
+
 
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and (events is null or events < 0) order by filename") || die $DBI::error;
-
-my $updateevents =  $dbh->prepare("update datasets set events=? where filename=?") || die $DBI::error;
 
 $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $file = $res[0];
+    my $entries = getentries($file);
+    if ($entries >= 0)
+    {
+	print "updating dcache $file with $entries\n";
+	$updateevents->execute($entries,$file);
+    }
+}
+
+$chkfile->finish();
+$getfiles->finish();
+$updateevents->finish();
+$dbh->disconnect;
+
+sub getentries
+{
+    my $file = $_[0];
     open(F2,"root.exe -q -b GetEntries.C\\(\\\"$file\\\"\\) 2>&1 |");
     my $checknow = 0;
     my $entries = -2;
@@ -67,11 +115,5 @@ while (my @res = $getfiles->fetchrow_array())
     }
     close(F2);
     print "file $file, entries: $entries\n";
-    if (defined $entries)
-    {
-	$updateevents->execute($entries,$file);
-    }
+    return $entries;
 }
-$getfiles->finish();
-$updateevents->finish();
-$dbh->disconnect;
