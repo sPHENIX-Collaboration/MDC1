@@ -34,7 +34,7 @@ close(F);
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and events is null order by filename");
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and (events is null or events < 0) order by filename");
 
 my $updateevents =  $dbh->prepare("update datasets set events=? where filename=?");
 
@@ -48,7 +48,7 @@ while (my @res = $getfiles->fetchrow_array())
     while(my $entr = <F2>)
     {
 	chomp $entr;
-	print "$entr\n";
+#	print "$entr\n";
 	if ($entr =~ /$file/)
 	{
 	    $checknow = 1;
