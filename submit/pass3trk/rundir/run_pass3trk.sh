@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.2
 # arguments 
 # $1: number of events
 # $2: track g4hits input file
