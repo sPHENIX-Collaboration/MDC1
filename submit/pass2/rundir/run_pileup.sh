@@ -1,5 +1,8 @@
 #!/usr/bin/bash
+export HOME=/sphenix/u/${LOGNAME}
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.2
+
+echo running: run_pileup.sh $*
 
 # arguments 
 # $1: number of output events
