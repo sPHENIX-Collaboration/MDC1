@@ -1,5 +1,8 @@
 #!/usr/bin/bash
+export HOME=/sphenix/u/${LOGNAME}
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.1
+
+echo running: run_hepmc.sh $*
 
 # arguments 
 # $1: number of events
