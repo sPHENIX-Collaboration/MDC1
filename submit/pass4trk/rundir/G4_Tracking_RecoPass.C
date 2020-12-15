@@ -146,7 +146,7 @@ void TrackingInit()
     G4TRACKING::use_rave_vertexing = true;
 
   // SC_CALIBMODE makes no sense if distortions are not present
-  G4TRACKING::SC_CALIBMODE = G4TPC::ENABLE_DISTORTIONS && G4TRACKING::SC_CALIBMODE;
+  G4TRACKING::SC_CALIBMODE = (G4TPC::ENABLE_STATIC_DISTORTIONS || G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS ) && G4TRACKING::SC_CALIBMODE;
 
   // For now the TpcSpaceChargeCorrection module only works with the GenFit tracking chain
   if (G4TPC::ENABLE_CORRECTIONS && !G4TRACKING::use_Genfit)
