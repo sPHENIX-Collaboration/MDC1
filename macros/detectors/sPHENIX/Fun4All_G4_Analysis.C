@@ -11,15 +11,15 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Analysis(
     const int nEvents = 1,
-    const string &inputFileTracks = "DST_TRACKS_sHijing_0_12fm-0000000001-00000.root",
-    const string &inputFileClusters = "DST_CALO_CLUSTER_sHijing_0_12fm-0000000001-00000.root"
+    const string &inputTracksFileList = "dst_tracks.list",
+    const string &inputClustersFileList = "dst_calo_cluster.list"
 )
 {
 // this convenience library knows all our i/o objects so you don't
 // have to figure out what is in each dst type 
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0); // set it to 1 if you want event printouts
+  se->Verbosity(); // set it to 1 if you want event printouts
 
 // here you create and register your analysis module like:
 // MyModule *mod = new MyModule();
@@ -27,11 +27,11 @@ void Fun4All_G4_Analysis(
 
 
    Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTrks");
-   in->fileopen(inputFileTracks);
+   in->AddListFile(inputTracksFileList);
    se->registerInputManager(in);
 
    in = new Fun4AllDstInputManager("DSTClusters");
-   in->fileopen(inputFileClusters);
+   in->AddListFile(inputClustersFileList);
    se->registerInputManager(in);
 
    se->run(nEvents);
