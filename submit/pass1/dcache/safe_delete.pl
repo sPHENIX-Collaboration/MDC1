@@ -9,6 +9,14 @@ use Getopt::Long;
 
 sub checkdownstream;
 
+my $fmrange = "0_12fm";
+my %downfiles = ();
+	$downfiles{"DST_BBC_G4HIT"} = 1;
+	$downfiles{"DST_CALO_G4HIT"} = 1;
+	$downfiles{"DST_TRKR_G4HIT"} = 1;
+	$downfiles{"DST_TRUTH_G4HIT"} = 1;
+$downfiles{"DST_VERTEX"} = 1;
+
 my $dokill;
 GetOptions('kill'=>\$dokill);
 if ( $#ARGV < 0 )
@@ -22,7 +30,6 @@ if ( $#ARGV < 0 )
 
 my $ndel = $ARGV[0];
 my $delfiles = 0;
-my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1";
 my $indirfile = "../condor/outdir.txt";
 if (! -f $indirfile)
 {
@@ -30,13 +37,7 @@ if (! -f $indirfile)
 }
 my $indir = `cat $indirfile`;
 chomp $indir;
-my $dcachedir = dirname($indir);
-my @sp1 = split(/MDC1\//,$dcachedir);
-$dcachedir = sprintf("%s/%s",$topdcachedir,$sp1[1]);
-print "$dcachedir\n";
 
-my $downstreamdir;
-my %downfiles = ();
 
 if (! defined $dokill)
 {
@@ -45,25 +46,58 @@ if (! defined $dokill)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $checkmd5 = $dbh->prepare("select lfn from files where lfn = ? and md5 is not null");
+my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and full_host_name = 'dcache' and md5 is not null");
+my $getdataset = $dbh->prepare("select runnumber,segment from datasets where filename=?");
+my $checkdataset = $dbh->prepare("select filename from datasets where runnumber=? and segment = ? and dsttype=?");
+my $delfcat = $dbh->prepare("delete from files where lfn=? and full_file_path=?");
+
 open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
 while (my $file = <F>)
 {
+    if ($file !~ /$fmrange/)
+    {
+	next;
+    }
     chomp $file;
     my $origsize = stat($file)->size;
     my $lfn = basename($file);
-    my $dcachefile = sprintf("%s/%s",$dcachedir,$lfn);
-    if (-f $dcachefile)
+    $getinfo->execute($lfn);
+    if ($getinfo->rows == 0)
     {
-	my $dcsize = stat($dcachefile)->size;
-	if ($dcsize == $origsize)
-	{
-	    $checkmd5->execute($lfn);
-	    if ($checkmd5->rows > 0)
-	    {
+	next;
+    }
+    elsif ($getinfo->rows > 1)
+    {
+	print "more than one row for $lfn check it\n";
+	die;
+    }
+    my @res = $getinfo->fetchrow_array();
+    if ($res[1] != $origsize)
+    {
+	print "size mismatch gpfs-dcache for $lfn:  $origsize, $res[1]\n";
+	next;
+    }
+    my $dcachefile = $res[2];
+    if (! -f $dcachefile)
+    {
+	print "dcache file $dcachefile does not exist\n";
+	next;
+    }
+    my $dcsize = stat($dcachefile)->size;
+    if ($dcsize != $origsize)
+    {
+	print "dcache size for $lfn: $dcsize not from file catalog: $res[1]\n";
+	next;
+    }
+    my $isokay = checkdownstream($lfn);
+if ($isokay == 0)
+ {
+    next;
+}
 		if (defined $dokill)
 		{
 		    print "delete $file\n";
+		    $delfcat->execute($lfn, $file);
 		    unlink $file;
 		}
 		else
@@ -76,59 +110,28 @@ while (my $file = <F>)
 		    print "deleted $delfiles files, quitting\n";
 		    exit(0);
 		}
-	    }
-	    else
-	    {
-		print "no md5 in file catalog for $file\n";
-	    }
-
-	    next;
-	}
-	else
-	{
-	    if ( $dcsize > 0)
-	    {
-		print "will not delete $file with dc size $dcsize\n";
-	    }
-	}
-    }
 }
 close(F);
-$checkmd5->finish();
+
+$getinfo->finish();
+$getdataset->finish();
+$checkdataset->finish();
+$delfcat->finish();
 $dbh->disconnect;
 
 sub checkdownstream
 {
     my $infile = basename($_[0]);
-    if (! defined $downstreamdir)
+    $getdataset->execute($infile);
+    my @res = $getdataset->fetchrow_array();
+    foreach my $downfiletype (keys %downfiles)
     {
-	my $downstreamfile = "../../pass2/condor/outdir.txt";
-	if (! -f $downstreamfile)
+	$checkdataset->execute($res[0],$res[1],$downfiletype);
+	if ($checkdataset->rows == 0)
 	{
-	    die "could not find $downstreamfile";
-	}
-	my $downstreamdir = `cat $downstreamfile`;
-	chomp $downstreamdir;
-	$downfiles{"DST_BBC_G4HIT"} = $downstreamdir;
-	$downfiles{"DST_CALO_G4HIT"} = $downstreamdir;
-	$downfiles{"DST_TRKR_G4HIT"} = $downstreamdir;
-	$downfiles{"DST_TRUTH_G4HIT"} = $downstreamdir;
-    }
-
-    my @sp1 = split(/_sHijing/,$infile);
-    foreach my $outf (keys %downfiles)
-    {
-	my $tstfile = sprintf("%s/%s_sHijing%s",$downfiles{$outf},$outf,$sp1[1]);
-	if (! -f $tstfile)
-	{
-	    print "cannot find $tstfile\n";
-	    return -1;
-	}
-	else
-	{
-#	    print "found $tstfile\n";
+	    return 0;
 	}
     }
-    return 0;
+    return 1;
 }
 
