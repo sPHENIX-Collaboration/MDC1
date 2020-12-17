@@ -44,6 +44,14 @@ open(F,"find $indir -maxdepth 1 -type f -name 'DST_CALO_G4HIT*.root' | sort |");
 while (my $file = <F>)
 {
     chomp  $file;
+    my $vertexfile = $file;
+    $vertexfile =~ s/DST_CALO_G4HIT/DST_VERTEX/;
+    if (! -f $vertexfile)
+    {
+	print "did not find $vertexfile\n";
+	next;
+    }
+    print "found $vertexfile\n";
     my $lfn = basename($file);
     print "found $file\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
@@ -57,7 +65,7 @@ while (my $file = <F>)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $file, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $file, $vertexfile, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
