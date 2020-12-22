@@ -19,7 +19,7 @@ if ($#ARGV < 0)
 
 my $maxcopy = $ARGV[0];
 my $nfiles = 1000;
-my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1";
+my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1";
 my $indirfile = "../condor/outdir.txt";
 if (! -f $indirfile)
 {
@@ -55,7 +55,7 @@ while (my $file = <F>)
 	{
 	    if (! defined $test)
 	    {
-		print "deleting size mismatch $lfn, gpfs size $origsize, dcache $dcsize\n";
+		print "check size mismatch $lfn, gpfs size $origsize, dcache $dcsize\n";
 	    }
 	    else
 	    {
@@ -103,11 +103,18 @@ sub write_copyfile()
     print F2 "}\n";
     print F2 "if (! -e \"$dcfile\")\n";
     print F2 "{\n";
+    print F2 "  system(\"date\");\n";
+    print F2 "  system(\"echo -n \\\"begin unixdate \\\"\");\n";
+    print F2 "  system(\"date +%s\");\n";
+    print F2 "  system(\"date +%s\");\n";
     print F2 "  system(\"dccp -d7 -C 3600 $infile $dcfile\");\n";
-    print F2 "if (\$exit_value != 0)\n";
-    print F2    "{\n";
-    print F2    "  die \"dccp failed for $infile\\n\";\n";
-    print F2    "}\n";
+    print F2 "  if (\$exit_value != 0)\n";
+    print F2 "    {\n";
+    print F2 "      die \"dccp failed for $infile\\n\";\n";
+    print F2 "    }\n";
+    print F2 "  system(\"date\");\n";
+    print F2 "  system(\"echo -n \\\"end unixdate \\\"\");\n";
+    print F2 "  system(\"date +%s\");\n";
     print F2 "}\n";
     $ncurfiles++;
     if ($ncurfiles >= $nfiles)
