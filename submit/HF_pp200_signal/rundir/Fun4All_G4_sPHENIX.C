@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_sPHENIX(
     const int nEvents = 1,
-    const string &inputFile = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const string &HF_Q_filter = "Charm", // or "Bottom"
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -68,7 +68,7 @@ int Fun4All_G4_sPHENIX(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   //  Input::READHITS = true;
-  INPUTREADHITS::filename = inputFile;
+  // INPUTREADHITS::filename = inputFile;
 
   // Or:
   // Use particle generator
@@ -79,13 +79,14 @@ int Fun4All_G4_sPHENIX(
   //  Input::EMBED = true;
   INPUTEMBED::filename = embed_input_file;
 
-  Input::SIMPLE = true;
+  // Input::SIMPLE = true;
   // Input::SIMPLE_NUMBER = 2; // if you need 2 of them
   // Input::SIMPLE_VERBOSITY = 1;
 
   //  Input::PYTHIA6 = true;
 
-  // Input::PYTHIA8 = true;
+  Input::PYTHIA8 = true;
+  PYTHIA8::config_file = "./phpythia8_HF_MDC1.cfg";
 
   //  Input::GUN = true;
   //  Input::GUN_NUMBER = 3; // if you need 3 of them
@@ -97,7 +98,7 @@ int Fun4All_G4_sPHENIX(
   // Input::UPSILON_VERBOSITY = 0;
 
   //  Input::HEPMC = true;
-  INPUTHEPMC::filename = inputFile;
+  // INPUTHEPMC::filename = inputFile;
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
@@ -112,6 +113,11 @@ int Fun4All_G4_sPHENIX(
   // Set generator specific options
   //--------------
   // can only be set after InputInit() is called
+
+  if (Input::PYTHIA8)
+  {
+
+  }
 
   // Simple Input generator:
   // if you run more than one of these Input::SIMPLE_NUMBER > 1
@@ -191,7 +197,7 @@ int Fun4All_G4_sPHENIX(
   //======================
 
   //  Enable::DSTOUT = true;
-  Enable::DSTOUT_COMPRESS = false;
+  Enable::DSTOUT_COMPRESS = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
@@ -241,7 +247,7 @@ int Fun4All_G4_sPHENIX(
   Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS_CELL && true;
 
   Enable::TRACKING_TRACK = true;
-  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
+  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && false;
   Enable::TRACKING_QA = Enable::TRACKING_TRACK and Enable::QA && true;
 
   //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
@@ -253,7 +259,7 @@ int Fun4All_G4_sPHENIX(
   Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-  Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && true;
+  Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && false;
   Enable::CEMC_QA = Enable::CEMC_CLUSTER and Enable::QA && true;
 
   Enable::HCALIN = true;
@@ -261,7 +267,7 @@ int Fun4All_G4_sPHENIX(
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-  Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && true;
+  Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
   Enable::HCALIN_QA = Enable::HCALIN_CLUSTER and Enable::QA && true;
 
   Enable::MAGNET = true;
@@ -272,7 +278,7 @@ int Fun4All_G4_sPHENIX(
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-  Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && true;
+  Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
   Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER and Enable::QA && true;
 
   // forward EMC
@@ -280,9 +286,9 @@ int Fun4All_G4_sPHENIX(
   Enable::FEMC_ABSORBER = true;
   Enable::FEMC_TOWER = Enable::FEMC && true;
   Enable::FEMC_CLUSTER = Enable::FEMC_TOWER && true;
-  Enable::FEMC_EVAL = Enable::FEMC_CLUSTER and Enable::QA && true;
+  Enable::FEMC_EVAL = Enable::FEMC_CLUSTER and Enable::QA && false;
 
-  Enable::EPD = false;
+  Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
   //Enable::PLUGDOOR = true;
