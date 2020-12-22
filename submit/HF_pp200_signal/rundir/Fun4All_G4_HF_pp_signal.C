@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 // For HepMC Hijing
 // try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
 
-int Fun4All_G4_sPHENIX(
+int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
     const string &HF_Q_filter = "Charm", // or "Bottom"
     const string &outputFile = "G4sPHENIX.root",
@@ -136,10 +136,13 @@ int Fun4All_G4_sPHENIX(
       exit(1);
     }
     p8_hf_signal_trigger->SetYHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking psuedorapidity
-    p8_hf_signal_trigger->SetStableParticleOnly(false);
+    p8_hf_signal_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
     p8_hf_signal_trigger->PrintConfig();
+//    p8_hf_signal_trigger->Verbosity(10);
 
     INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
+    INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
+    INPUTGENERATOR::Pythia8->set_vertex_distribution_width(0.1,0.1,10,0);
   }
 
   // Simple Input generator:
