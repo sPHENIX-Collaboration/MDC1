@@ -19,6 +19,8 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <phpythia8/PHPy8ParticleTrigger.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -116,7 +118,28 @@ int Fun4All_G4_sPHENIX(
 
   if (Input::PYTHIA8)
   {
+    PHPy8ParticleTrigger * p8_hf_signal_trigger = new PHPy8ParticleTrigger();
 
+    if (HF_Q_filter == "Charm")
+    {
+      p8_hf_signal_trigger -> AddParticles(4);
+      p8_hf_signal_trigger -> AddParticles(-4);
+    }
+    else if (HF_Q_filter == "Bottom")
+    {
+      p8_hf_signal_trigger -> AddParticles(5);
+      p8_hf_signal_trigger -> AddParticles(-5);
+    }
+    else
+    {
+      cout <<"Fatal error on HF_Q_filter configuration = "<<HF_Q_filter<<endl;
+      exit(1);
+    }
+    p8_hf_signal_trigger->SetYHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking psuedorapidity
+    p8_hf_signal_trigger->SetStableParticleOnly(false);
+    p8_hf_signal_trigger->PrintConfig();
+
+    INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
   }
 
   // Simple Input generator:
