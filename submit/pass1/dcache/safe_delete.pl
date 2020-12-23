@@ -11,10 +11,10 @@ sub checkdownstream;
 
 my $fmrange = "0_12fm";
 my %downfiles = ();
-	$downfiles{"DST_BBC_G4HIT"} = 1;
-	$downfiles{"DST_CALO_G4HIT"} = 1;
-	$downfiles{"DST_TRKR_G4HIT"} = 1;
-	$downfiles{"DST_TRUTH_G4HIT"} = 1;
+$downfiles{"DST_BBC_G4HIT"} = 1;
+$downfiles{"DST_CALO_G4HIT"} = 1;
+$downfiles{"DST_TRKR_G4HIT"} = 1;
+$downfiles{"DST_TRUTH_G4HIT"} = 1;
 $downfiles{"DST_VERTEX"} = 1;
 
 my $dokill;
@@ -90,26 +90,26 @@ while (my $file = <F>)
 	next;
     }
     my $isokay = checkdownstream($lfn);
-if ($isokay == 0)
- {
-    next;
-}
-		if (defined $dokill)
-		{
-		    print "delete $file\n";
-		    $delfcat->execute($lfn, $file);
-		    unlink $file;
-		}
-		else
-		{
-		    print "would delete $file\n";
-		}
-		$delfiles++;
-		if ($ndel > 0 && $delfiles >= $ndel)
-		{
-		    print "deleted $delfiles files, quitting\n";
-		    exit(0);
-		}
+    if ($isokay == 0)
+    {
+	next;
+    }
+    if (defined $dokill)
+    {
+	print "delete $file\n";
+	$delfcat->execute($lfn, $file);
+	unlink $file;
+    }
+    else
+    {
+	print "would delete $file\n";
+    }
+    $delfiles++;
+    if ($ndel > 0 && $delfiles >= $ndel)
+    {
+	print "deleted $delfiles files, quitting\n";
+	exit(0);
+    }
 }
 close(F);
 
@@ -134,4 +134,3 @@ sub checkdownstream
     }
     return 1;
 }
-
