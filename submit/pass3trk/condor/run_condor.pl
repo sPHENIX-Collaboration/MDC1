@@ -29,7 +29,7 @@ my $sequence = $ARGV[6];
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pass3trk");
+my $condorlogdir = sprintf("/tmp/fm_0_12/pass3trk");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
