@@ -20,6 +20,7 @@ if ($#ARGV < 0)
 my $maxcopy = $ARGV[0];
 my $nfiles = 5000;
 my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1";
+my $oldtopdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1";
 my $indirfile = "../condor/outdir.txt";
 if (! -f $indirfile)
 {
@@ -33,6 +34,11 @@ my @sp1 = split(/MDC1\//,$dcachedir);
 $dcachedir = sprintf("%s/%s",$topdcachedir,$sp1[1]);
 print "$dcachedir\n";
 
+my $olddcachedir = dirname($indir);
+my @sp1 = split(/MDC1\//,$olddcachedir);
+$olddcachedir = sprintf("%s/%s",$oldtopdcachedir,$sp1[1]);
+print "$olddcachedir\n";
+
 my $ncopy = 0;
 my $ncurfiles = 0;
 open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
@@ -43,6 +49,11 @@ while (my $file = <F>)
     my $origsize = stat($file)->size;
     my $lfn = basename($file);
     my $dcachefile = sprintf("%s/%s",$dcachedir,$lfn);
+    my $realdcachefile = $dcachefile;
+    if (! -f $dcachefile)
+    {
+	$dcachefile = sprintf("%s/%s",$olddcachedir,$lfn);
+    }
     if (-f $dcachefile)
     {
 	my $dcsize = stat($dcachefile)->size;
@@ -55,7 +66,7 @@ while (my $file = <F>)
 	{
 	    if (! defined $test)
 	    {
-		print "deleting size mismatch $lfn, gpfs size $origsize, dcache $dcsize\n";
+		print "check size mismatch $lfn, gpfs size $origsize, dcache $dcsize\n";
 	    }
 	    else
 	    {
@@ -63,7 +74,7 @@ while (my $file = <F>)
 	    }
 	}
     }
-    &write_copyfile($file,$dcachefile);
+    &write_copyfile($file,$realdcachefile);
     $ncopy++;
     if ($ncopy >= $maxcopy)
     {
