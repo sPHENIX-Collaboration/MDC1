@@ -32,7 +32,7 @@ my $sequence = $ARGV[6];
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/2020-11-18/fm_0-12");
+my $condorlogdir = sprintf("/tmp/fm_0-12/pass1");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
