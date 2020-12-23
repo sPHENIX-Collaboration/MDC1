@@ -97,7 +97,7 @@ foreach my $lfn (sort keys %sourcefiles)
 		if (defined $dokill)
 		{
 		    print "unlink $sourcefiles{$lfn}\n";
-		    unlink $sourcefiles{$lfn};
+		    unlink $sourcefiles{$lfn} or die "could not unlink $sourcefiles{$lfn}: $!";
 		    print "deleting $sourcefiles{$lfn} from fcat\n";
 		    $delfcat->execute($sourcefiles{$lfn});
 		}
