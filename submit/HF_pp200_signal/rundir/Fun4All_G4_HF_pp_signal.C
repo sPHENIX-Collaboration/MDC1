@@ -12,6 +12,7 @@
 #include <G4_HIJetReco.C>
 #include <G4_Input.C>
 #include <G4_Jets.C>
+#include <G4_KFParticle.C>
 #include <G4_ParticleFlow.C>
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
@@ -94,10 +95,16 @@ int Fun4All_G4_HF_pp_signal(
   //  Input::GUN_NUMBER = 3; // if you need 3 of them
   // Input::GUN_VERBOSITY = 1;
 
+  //D0 generator
+  //Input::DZERO = false;
+  //Input::DZERO_VERBOSITY = 0;
+  //Lambda_c generator //Not ready yet
+  //Input::LAMBDAC = false;
+  //Input::LAMBDAC_VERBOSITY = 0;
   // Upsilon generator
-  //  Input::UPSILON = true;
-  // Input::UPSILON_NUMBER = 3; // if you need 3 of them
-  // Input::UPSILON_VERBOSITY = 0;
+  //Input::UPSILON = true;
+  //Input::UPSILON_NUMBER = 3; // if you need 3 of them
+  //Input::UPSILON_VERBOSITY = 0;
 
   //  Input::HEPMC = true;
   // INPUTHEPMC::filename = inputFile;
@@ -321,7 +328,12 @@ int Fun4All_G4_HF_pp_signal(
   Enable::PLUGDOOR_ABSORBER = true;
 
   Enable::GLOBAL_RECO = true;
-  //  Enable::GLOBAL_FASTSIM = true;
+  //Enable::GLOBAL_FASTSIM = true;
+  
+  Enable::KFPARTICLE = true;
+  //Enable::KFPARTICLE_VERBOSITY = 1;
+  Enable::KFPARTICLE_TRUTH_MATCH = true;
+  Enable::KFPARTICLE_SAVE_NTUPLE = true;
 
   Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
@@ -498,6 +510,12 @@ int Fun4All_G4_HF_pp_signal(
 
   if (Enable::USER) UserAnalysisInit();
 
+  //======================
+  // Run KFParticle on evt
+  //======================
+  if (Enable::KFPARTICLE) KFParticle_D0_Reco();
+  //if (Enable::KFPARTICLE && Input::LAMBDAC) KFParticle_Lambdac_Reco();
+     
   //----------------------
   // Standard QAs
   //----------------------
