@@ -432,8 +432,6 @@ int Fun4All_G4_HF_pp_signal(
   if (Enable::FEMC_TOWER) FEMC_Towers();
   if (Enable::FEMC_CLUSTER) FEMC_Clusters();
 
-  if (Enable::DSTOUT_COMPRESS) ShowerCompress();
-
   //--------------
   // SVTX tracking
   //--------------
