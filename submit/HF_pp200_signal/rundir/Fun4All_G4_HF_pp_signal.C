@@ -229,7 +229,7 @@ int Fun4All_G4_HF_pp_signal(
   // Write the DST
   //======================
 
-  //  Enable::DSTOUT = true;
+  Enable::DSTOUT = true;
   Enable::DSTOUT_COMPRESS = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
