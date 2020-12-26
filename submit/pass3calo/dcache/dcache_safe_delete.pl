@@ -46,6 +46,7 @@ while (my $filename = readdir(DIR))
     {
 	next;
     }
+    print "$filename\n";
     $targetfiles{$filename} = sprintf("%s/%s",$targetdir,$filename);
 }
 closedir(DIR);
@@ -113,6 +114,11 @@ foreach my $lfn (sort keys %sourcefiles)
 		print "$delfiles files deleted, all done\n";
 		exit(0);
 	    }
+	}
+	else
+	{
+	    print "$sourcefiles{$lfn} size $sourcesize\n";
+	    print "$targetfiles{$lfn} size $targetsize\n";
 	}
     }
 }
