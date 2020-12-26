@@ -114,6 +114,11 @@ foreach my $lfn (sort keys %sourcefiles)
 		exit(0);
 	    }
 	}
+	else
+	{
+	    print "$sourcefiles{$lfn} size $sourcesize\n";
+	    print "$targetfiles{$lfn} size $targetsize\n";
+	}
     }
 }
 
