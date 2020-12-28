@@ -9,11 +9,12 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/CaloCluster";
-
+#my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits";
+my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/CaloCluster";
+my $fmrange = "0_12fm";
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?"); 
+my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=? and full_file_path like '$topdcachedir/%'");
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'dcache',?,'now',?)");
 my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_file_path = ?");
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype) values (?,?,?,?,'mdc1',?)");
@@ -22,6 +23,10 @@ my $updatedataset = $dbh->prepare("update datasets set size = ? where filename=?
 open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' | sort |");
 while (my $file = <F>)
 {
+    if ($file !~ /$fmrange/)
+    {
+	next;
+    }
     chomp $file;
     my $fsize = stat($file)->size;
     if ($fsize == 0) # file being copied is zero size
