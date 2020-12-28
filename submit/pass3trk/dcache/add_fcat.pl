@@ -20,11 +20,11 @@ my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segm
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc1'");
 my $updatedataset = $dbh->prepare("update datasets set size = ? where filename=?");
 print "find $topdcachedir -maxdepth 1 -type f -name '*.root' -print\n";
-open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' -print |");
+open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' | sort |");
 while (my $file = <F>)
 {
     chomp $file;
- #   print "file: $file\n";
+#    print "file: $file\n";
     my $fsize = stat($file)->size;
     if ($fsize == 0) # file being copied is zero size
     {
