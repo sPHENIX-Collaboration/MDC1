@@ -9,105 +9,111 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-#my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits";
-my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/CaloCluster";
+my %topdcachehash = ();
+$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/CaloCluster"} = 1;
+$topdcachehash{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/CaloCluster"} = 1;
+
 my $fmrange = "0_12fm";
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=? and full_file_path like '$topdcachedir/%'");
+my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?");
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'dcache',?,'now',?)");
 my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_file_path = ?");
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype) values (?,?,?,?,'mdc1',?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc1'");
 my $updatedataset = $dbh->prepare("update datasets set size = ? where filename=?");
-open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' | sort |");
-while (my $file = <F>)
+
+foreach my $topdcachedir (keys %topdcachehash)
 {
-    if ($file !~ /$fmrange/)
+    print "checking $topdcachedir for new files\n";
+    open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' | sort |");
+    while (my $file = <F>)
     {
-	next;
-    }
-    chomp $file;
-    my $fsize = stat($file)->size;
-    if ($fsize == 0) # file being copied is zero size
-    {
-	next;
-    }
-    my $lfn = basename($file);
-    my $needinsert = 1;
-#    print "checking $lfn\n";
-    $chkfile->execute($lfn);
-    while(my @res = $chkfile->fetchrow_array)
-    {
-	if ($res[1] eq  $file)
+	if ($file !~ /$fmrange/)
 	{
-	    if ($fsize == $res[0])
+	    next;
+	}
+	chomp $file;
+	my $fsize = stat($file)->size;
+	if ($fsize == 0) # file being copied is zero size
+	{
+	    next;
+	}
+	my $lfn = basename($file);
+	my $needinsert = 1;
+#    print "checking $lfn\n";
+	$chkfile->execute($lfn);
+	while(my @res = $chkfile->fetchrow_array)
+	{
+	    if ($res[1] eq  $file)
 	    {
-		$needinsert = 0;
-		next;
+		if ($fsize == $res[0])
+		{
+		    $needinsert = 0;
+		    next;
+		}
+		else
+		{
+		    if (! defined $test)
+		    {
+			$updatesize->execute($fsize,$lfn,$file);
+		    }
+		    else
+		    {
+			print "would update size for $lfn from $res[0] to $fsize\n";
+		    }
+		}
+	    }
+	}
+	if ($needinsert != 0)
+	{
+	    if (! defined $test)
+	    {
+		print "inserting $lfn into filecatalog\n";
+		$insertfile->execute($lfn,$file,$fsize);
 	    }
 	    else
 	    {
-		if (! defined $test)
-		{
-		    $updatesize->execute($fsize,$lfn,$file);
-		}
-		else
-		{
-		    print "would update size for $lfn from $res[0] to $fsize\n";
-		}
+		print "would insert $lfn, $file, $fsize\n";
 	    }
 	}
-    }
-    if ($needinsert != 0)
-    {
-	if (! defined $test)
+	$chkdataset->execute($lfn);
+	if ($chkdataset->rows == 0)
 	{
-	    print "inserting $lfn into filecatalog\n";
-	    $insertfile->execute($lfn,$file,$fsize);
-	}
-	else
-	{
-	    print "would insert $lfn, $file, $fsize\n";
-	}
-    }    
-    $chkdataset->execute($lfn);
-    if ($chkdataset->rows == 0)
-    {
-	my $runnumber = 0;
-	my $segment = -1;
-	if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
-	{
-	    $runnumber = int($2);
-	    $segment = int($3);
-	}
-	my @sp1 = split(/\_sHijing/,$lfn);
-	if (! defined $test)
-	{
-	    $insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]);
-	}
-	else
-	{
-	    print "would insert $lfn, $runnumber, $segment, $fsize into datasets\n";
-	}
-    }
-    else
-    {
-	while (my @res =  $chkdataset->fetchrow_array())
-	{
-	    if ($fsize != $res[0])
+	    my $runnumber = 0;
+	    my $segment = -1;
+	    if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
 	    {
-		if (! defined $test)
+		$runnumber = int($2);
+		$segment = int($3);
+	    }
+	    my @sp1 = split(/\_sHijing/,$lfn);
+	    if (! defined $test)
+	    {
+		$insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]);
+	    }
+	    else
+	    {
+		print "would insert $lfn, $runnumber, $segment, $fsize into datasets\n";
+	    }
+	}
+	else
+	{
+	    while (my @res =  $chkdataset->fetchrow_array())
+	    {
+		if ($fsize != $res[0])
 		{
-		    $updatedataset->execute($fsize,$lfn);
-		}
-		else
-		{
-		    print "would update size for $lfn from $res[0] to $fsize\n";
+		    if (! defined $test)
+		    {
+			$updatedataset->execute($fsize,$lfn);
+		    }
+		    else
+		    {
+			print "would update size for $lfn from $res[0] to $fsize\n";
+		    }
 		}
 	    }
 	}
     }
+    close(F);
 }
-
-close(F);
