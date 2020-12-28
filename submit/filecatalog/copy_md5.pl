@@ -62,7 +62,7 @@ while (my @res = $getfiles->fetchrow_array())
     }
     if (! defined $md5sum)
     {
-	print "no md5sum for $lfn\n";
+#	print "no md5sum for $lfn\n";
 	next;
     }
     foreach my $entry (keys %files_no_md5)
