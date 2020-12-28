@@ -7,9 +7,10 @@ use DBI;
 
 use Getopt::Long;
 
+my $fmrange="0_12fm";
 my %downfiles = ();
-my $sourcedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/CaloCluster";
-my $targetdir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/CaloCluster";
+my $sourcedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits";
+my $targetdir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/G4Hits";
 
 
 my $dokill;
@@ -31,7 +32,7 @@ my %targetfiles = ();
 opendir(DIR, $sourcedir) or die "Could not open $sourcedir\n";
 while (my $filename = readdir(DIR)) 
 {
-    if ($filename !~ /\.root/)
+    if ($filename !~ /\.root/ || $filename != /$fmrange/)
     {
 	next;
     }
@@ -46,7 +47,6 @@ while (my $filename = readdir(DIR))
     {
 	next;
     }
-    print "$filename\n";
     $targetfiles{$filename} = sprintf("%s/%s",$targetdir,$filename);
 }
 closedir(DIR);
