@@ -36,11 +36,7 @@ while (my $filename = readdir(DIR))
 	next;
     }
     $sourcefiles{$filename} = sprintf("%s/%s",$sourcedir,$filename);
-}
-closedir(DIR);
-
-opendir(DIR, $targetdir) or die "Could not open $targetdir\n";
-while (my $filename = readdir(DIR)) 
+if ($filename =~ /00481/)
 {
     if ($filename !~ /\.root/)
     {
@@ -50,6 +46,32 @@ while (my $filename = readdir(DIR))
     $targetfiles{$filename} = sprintf("%s/%s",$targetdir,$filename);
 }
 closedir(DIR);
+
+#opendir(DIR, $targetdir) or die "Could not open $targetdir\n";
+#while (my $filename = readdir(DIR)) 
+#{
+#    if ($filename !~ /\.root/)
+#    {
+#	next;
+#    }
+#    $targetfiles{$filename} = sprintf("%s/%s",$targetdir,$filename);
+#
+#}
+#closedir(DIR);
+#open(F,"find $targetdir -maxdepth 1 -type f -name '*.root' -print |");
+#while (my $file = <F>)
+#{
+#    chomp $file;
+#    my $lfn = basename($file);
+#    print "found $lfn\n";
+#    $targetfiles{$lfn} = $file;
+#if ($lfn =~ /00481/)
+#{
+#    print "$lfn , $targetfiles{$lfn}\n";
+#}
+#}
+#close(F);
+
 
 if (! defined $dokill)
 {
@@ -62,11 +84,12 @@ my $delfcat = $dbh->prepare("delete from files where full_file_path=?");
 my $checksize = $dbh->prepare("select size from files where full_file_path=?");
 foreach my $lfn (sort keys %sourcefiles)
 {
+    print "checking $lfn\n";
     if (exists $targetfiles{$lfn})
     {
-#	print "lfn: $lfn\n";
-#	print "target: $targetfiles{$lfn}\n";
-#	print "source: $sourcefiles{$lfn}\n";
+	print "lfn: $lfn\n";
+	print "target: $targetfiles{$lfn}\n";
+	print "source: $sourcefiles{$lfn}\n";
 	my $sourcesize = stat($sourcefiles{$lfn})->size;
 	my $targetsize = stat($targetfiles{$lfn})->size;
 # check source file size in filecatalog
@@ -121,6 +144,7 @@ foreach my $lfn (sort keys %sourcefiles)
 	    print "$targetfiles{$lfn} size $targetsize\n";
 	}
     }
+    die;
 }
 
 $delfcat->finish();
