@@ -16,7 +16,7 @@ my $outputdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_HepMC/data");
 mkpath($condorlogdir);
 mkpath($condoroutdir);
 mkpath($outputdir);
-my $maxnum=hex('0xFFFFFFFF');
+my $maxnum=900000000; # pythia manual
 my %used_seed = ();
 
 while ((keys %used_seed) < $total_events/$evt_per_file)
