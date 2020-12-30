@@ -66,9 +66,9 @@ while (my $file = <F>)
     {
 	next;
     }
-    elsif ($getinfo->rows > 1)
+    elsif ($getinfo->rows > 2)
     {
-	print "more than one row for $lfn check it\n";
+	print "more than two rows for $lfn check it\n";
 	die;
     }
     my @res = $getinfo->fetchrow_array();
