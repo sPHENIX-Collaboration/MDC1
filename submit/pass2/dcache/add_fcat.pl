@@ -9,9 +9,9 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-#my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/PileUp";
+my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/PileUp";
 my $fmrange = "0_12fm";
-my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/PileUp";
+#my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/PileUp";
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=? and full_file_path like '$topdcachedir/%'");
