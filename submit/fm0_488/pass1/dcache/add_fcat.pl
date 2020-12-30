@@ -58,7 +58,10 @@ foreach my $topdcachedir (keys %topdcachehash)
 		{
 		    if (! defined $test)
 		    {
+			print "updating size for $lfn from $res[0] to $fsize\n";
 			$updatesize->execute($fsize,$lfn,$file);
+			$needinsert = 0;
+			next;
 		    }
 		    else
 		    {
