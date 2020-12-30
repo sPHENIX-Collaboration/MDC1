@@ -41,7 +41,6 @@ foreach my $topdcachedir (keys %topdcachehash)
 	}
 	my $lfn = basename($file);
 	my $needinsert = 1;
-#    print "checking $lfn\n";
 	$chkfile->execute($lfn);
 	while(my @res = $chkfile->fetchrow_array)
 	{
@@ -56,7 +55,10 @@ foreach my $topdcachedir (keys %topdcachehash)
 		{
 		    if (! defined $test)
 		    {
+			print "updating size for $lfn from $res[0] to $fsize\n";
 			$updatesize->execute($fsize,$lfn,$file);
+			$needinsert = 0;
+			next;
 		    }
 		    else
 		    {
