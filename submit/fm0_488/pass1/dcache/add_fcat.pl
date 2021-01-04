@@ -10,16 +10,14 @@ my $test;
 GetOptions("test"=>\$test);
 
 my %topdcachehash = ();
-$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits"} = 1;
-$topdcachehash{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/G4Hits"} = 1;
-#my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits";
-#my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/G4Hits";
+$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits"} = "dcache_phenix";
+$topdcachehash{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/G4Hits"} = "dcache";
 
 my $fmrange = "0_488fm";
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?"); 
-my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'dcache',?,'now',?)");
+my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,?,?,'now',?)");
 my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_file_path = ?");
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype) values (?,?,?,?,'mdc1',?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc1'");
@@ -74,12 +72,12 @@ foreach my $topdcachedir (keys %topdcachehash)
 	{
 	    if (! defined $test)
 	    {
-		print "inserting $lfn into filecatalog\n";
-		$insertfile->execute($lfn,$file,$fsize);
+		print "inserting $lfn into filecatalog hostname $topdcachehash{$topdcachedir}\n";
+		$insertfile->execute($lfn,$topdcachehash{$topdcachedir},$file,$fsize);
 	    }
 	    else
 	    {
-		print "would insert $lfn, $file, $fsize\n";
+		print "would insert $lfn, $topdcachehash{$topdcachedir}, $file, $fsize\n";
 	    }
 	}
 	$chkdataset->execute($lfn);
