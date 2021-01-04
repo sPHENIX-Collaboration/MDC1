@@ -8,7 +8,7 @@ use Getopt::Long;
 
 sub write_copyfile();
 
-my $nfiles = 10000;
+my $nfiles = 2000;
 
 my $dcache = 0;
 GetOptions("dcache:i"=>\$dcache);
@@ -61,7 +61,7 @@ foreach my $lfn (keys %myfiles)
     delete($otherfiles{$lfn});
 }
 my $ncurfiles = 0;
-foreach my $lfn (keys %otherfiles)
+foreach my $lfn (sort keys %otherfiles)
 {
     if (-f $otherfiles{$lfn})
     {
@@ -75,7 +75,7 @@ foreach my $lfn (keys %otherfiles)
 	die;
     }
 }
-foreach my $lfn (keys %gpfsfiles)
+foreach my $lfn (sort keys %gpfsfiles)
 {
     if (-f $gpfsfiles{$lfn})
     {
@@ -91,6 +91,11 @@ foreach my $lfn (keys %gpfsfiles)
 my $ngpfs = keys %gpfsfiles;
 my $ndcache = keys %otherfiles;
 print "files in gpfs: $ngpfs, files in dcache: $ndcache\n";
+if ($ncurfiles > 0)
+{
+    print F2 "print \"all done\\n\";\n";
+    close(F2);
+}
 $getgpfsfiles->finish();
 $getmyfiles->finish();
 $getotherfiles->finish();
