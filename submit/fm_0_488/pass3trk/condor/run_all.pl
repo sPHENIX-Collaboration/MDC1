@@ -69,7 +69,7 @@ foreach my $segment (sort keys %calohash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
 
 	my $tstflag="";
 	if (defined $test)
