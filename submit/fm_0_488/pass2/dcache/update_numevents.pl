@@ -68,7 +68,7 @@ while (my $file = <F>)
 #die;
 
 
-my $getfiles = $dbh->prepare("select filename from datasets where (dsttype = 'DST_BBC_G4HIT' or dsttype ='DST_CALO_G4HIT' or dsttype ='DST_TRKR_G4HIT' or dsttype = 'DST_TRUTH_G4HIT' or dsttype ='DST_VERTEX') and (events is null or events < 0) order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where (dsttype = 'DST_BBC_G4HIT' or dsttype ='DST_CALO_G4HIT' or dsttype ='DST_TRKR_G4HIT' or dsttype = 'DST_TRUTH_G4HIT' or dsttype ='DST_VERTEX') and (events is null or events < 0) and filename like '%sHijing_0_488fm%' order by filename") || die $DBI::error;
 
 $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())
