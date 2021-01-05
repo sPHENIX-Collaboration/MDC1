@@ -4,7 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4_Global.C>
-#include <G4_OutputManager_Pileup.C>
+#include <G4_OutputManager_Pileup_pp.C>
 #include <G4_Production.C>
 
 #include <g4main/Fun4AllDstPileupInputManager.h>
@@ -23,10 +23,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
 
 //________________________________________________________________________________________________
-int Fun4All_G4_Pileup(
+int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_sHijing_0_12fm-0000000001-00000.root",
-    const string &backgroundList = "pileupbkg.list",
+    const string &inputFile = "G4Hits_pythia8_mb-0000000001-00000.root",
+    const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".")
 
 {
@@ -65,7 +65,7 @@ int Fun4All_G4_Pileup(
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
-
+  inpile->setCollisionRate(3e6); // 3MHz according to BUP
   // open file
   inpile->AddListFile(backgroundList);
   se->registerInputManager(inpile);
