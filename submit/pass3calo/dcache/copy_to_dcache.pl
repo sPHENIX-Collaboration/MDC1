@@ -61,7 +61,7 @@ foreach my $lfn (keys %myfiles)
     delete($otherfiles{$lfn});
 }
 my $ncurfiles = 0;
-foreach my $lfn (keys %otherfiles)
+foreach my $lfn (sort keys %otherfiles)
 {
     if (-f $otherfiles{$lfn})
     {
@@ -75,7 +75,7 @@ foreach my $lfn (keys %otherfiles)
 	die;
     }
 }
-foreach my $lfn (keys %gpfsfiles)
+foreach my $lfn (sort keys %gpfsfiles)
 {
     if (-f $gpfsfiles{$lfn})
     {
