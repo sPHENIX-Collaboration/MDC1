@@ -11,13 +11,27 @@ sub write_copyfile();
 my $nfiles = 10000;
 
 my $dcache = 0;
-my $dsttype;
+my $dsttype = "all";
+my %dsthash = ();
 GetOptions("dcache:i"=>\$dcache, "dsttype:s"=>\$dsttype);
 if (! defined $dsttype)
 {
     print "no dsttype given\n";
     exit(1);
 }
+if ($dsttype eq "all")
+{
+    $dsthash{"DST_BBC_G4HIT"} = 1;
+    $dsthash{"DST_CALO_G4HIT"} = 1;
+    $dsthash{"DST_TRKR_G4HIT"} = 1;
+    $dsthash{"DST_TRUTH_G4HIT"} = 1;
+    $dsthash{"DST_VERTEX"} = 1;
+}
+else
+{
+$dsthash{"$dsttype"} = 1;
+}
+
 my @dcpath = ();
 push(@dcpath,"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/PileUp");
 push(@dcpath,"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/PileUp");
@@ -37,30 +51,39 @@ else
 {
     $otherdcache = 0;
 }
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
-$dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $dstname = sprintf("%s_sHijing_0_12fm",$dsttype);
-my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
-my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_host_name = 'gpfs' order by lfn");
-my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
+
 my %gpfsfiles = ();
 my %myfiles = ();
 my %otherfiles = ();
 
-$getmyfiles->execute();
-while (my @res = $getmyfiles->fetchrow_array())
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+
+foreach my $dst (keys %dsthash)
 {
-    $myfiles{$res[0]} = $res[1];
-}
-$getgpfsfiles->execute();
-while (my @res = $getgpfsfiles->fetchrow_array())
-{
-    $gpfsfiles{$res[0]} = $res[1];
-}
-$getotherfiles->execute();
-while (my @res = $getotherfiles->fetchrow_array())
-{
-    $otherfiles{$res[0]} = $res[1];
+    my $dstname = sprintf("%s_sHijing_0_12fm",$dst);
+    my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
+    my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_host_name = 'gpfs' order by lfn");
+    my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$dstname%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
+
+    $getmyfiles->execute();
+    while (my @res = $getmyfiles->fetchrow_array())
+    {
+	$myfiles{$res[0]} = $res[1];
+    }
+    $getgpfsfiles->execute();
+    while (my @res = $getgpfsfiles->fetchrow_array())
+    {
+	$gpfsfiles{$res[0]} = $res[1];
+    }
+    $getotherfiles->execute();
+    while (my @res = $getotherfiles->fetchrow_array())
+    {
+	$otherfiles{$res[0]} = $res[1];
+    }
+    $getmyfiles->finish();
+    $getgpfsfiles->finish();
+    $getotherfiles->finish();
 }
 foreach my $lfn (keys %myfiles)
 {
