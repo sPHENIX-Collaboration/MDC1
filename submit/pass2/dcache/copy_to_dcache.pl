@@ -8,7 +8,7 @@ use Getopt::Long;
 
 sub write_copyfile();
 
-my $nfiles = 10000;
+my $nfiles = 1000;
 
 my $dcache = 0;
 my $dsttype = "all";
@@ -29,7 +29,7 @@ if ($dsttype eq "all")
 }
 else
 {
-$dsthash{"$dsttype"} = 1;
+    $dsthash{"$dsttype"} = 1;
 }
 
 my @dcpath = ();
@@ -126,9 +126,6 @@ if ($ncurfiles > 0)
     print F2 "print \"all done\\n\";\n";
     close(F2);
 }
-$getgpfsfiles->finish();
-$getmyfiles->finish();
-$getotherfiles->finish();
 $dbh->disconnect;
 
 
