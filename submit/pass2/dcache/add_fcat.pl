@@ -10,7 +10,7 @@ my $test;
 GetOptions("test"=>\$test);
 
 my %topdcachehash = ();
-$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/PileUp"} = 1;
+#$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/PileUp"} = 1;
 $topdcachehash{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/PileUp"} = 1;
 
 my $fmrange = "0_12fm";
