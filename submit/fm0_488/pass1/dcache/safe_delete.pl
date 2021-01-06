@@ -62,7 +62,7 @@ while (my $file = <F>)
     {
 	next;
     }
-    elsif ($getinfo->rows > 1)
+    elsif ($getinfo->rows > 2)
     {
 	print "more than two rows for $lfn check it\n";
 	die;
