@@ -46,14 +46,14 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKS_sHijing_0_12fm-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKS_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
 
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $file, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -76,4 +76,3 @@ while (my @res = $getfiles->fetchrow_array())
 	}
     }
 }
-close(F);
