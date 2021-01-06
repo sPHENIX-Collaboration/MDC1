@@ -13,8 +13,8 @@ my $nfiles = 500;
 my $dcache = 0;
 GetOptions("dcache:i"=>\$dcache);
 my @dcpath = ();
-push(@dcpath,"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/G4Hits");
-push(@dcpath,"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/G4Hits");
+push(@dcpath,"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/TrkrCluster");
+push(@dcpath,"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/TrkrCluster");
 if ($dcache > 1 || $dcache < 0)
 {
     print "invalid dcache number $dcache\n";
@@ -33,9 +33,9 @@ else
 }
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'G4Hits_sHijing_0_488fm%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
-my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'G4Hits_sHijing_0_488fm%' and full_host_name = 'gpfs' order by lfn");
-my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'G4Hits_sHijing_0_488fm%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
+my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_TRKR_CLUSTER_sHijing_0_488fm%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
+my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_TRKR_CLUSTER_sHijing_0_488fm%' and full_host_name = 'gpfs' order by lfn");
+my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_TRKR_CLUSTER_sHijing_0_488fm%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
 my %gpfsfiles = ();
 my %myfiles = ();
 my %otherfiles = ();
