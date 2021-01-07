@@ -5,6 +5,7 @@ use warnings;
 use File::Path;
 use File::Basename;
 use Getopt::Long;
+use DBI;
 
 
 my $outevents = 0;
@@ -30,30 +31,40 @@ my $outdir = `cat outdir.txt`;
 chomp $outdir;
 mkpath($outdir);
 
-my $indirfile = sprintf("../../pass2/condor/outdir.txt");
-if (! -f $indirfile)
-{
-    print "could not find file with input directory $indirfile\n";
-    exit(1);
-}
-my $indir = `cat $indirfile`;
-chomp $indir;
 
+my %trkhash = ();
+my %truthhash = ();
+
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_12fm%' order by filename") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%sHijing_0_12fm%'");
 my $nsubmit = 0;
-open(F,"find $indir -maxdepth 1 -type f -name 'DST_TRKR_G4HIT*.root' | sort |");
-while (my $file = <F>)
+$getfiles->execute() || die $DBI::error;
+my $ncal = $getfiles->rows;
+while (my @res = $getfiles->fetchrow_array())
 {
-    chomp  $file;
-    my $truthfile = $file;
-    $truthfile =~ s/DST_TRKR_G4HIT/DST_TRUTH_G4HIT/;
-    if (! -f $truthfile)
+    $trkhash{$res[1]} = $res[0];
+}
+$getfiles->finish();
+$gettruthfiles->execute() || die $DBI::error;
+my $ntruth = $gettruthfiles->rows;
+while (my @res = $gettruthfiles->fetchrow_array())
+{
+    $truthhash{$res[1]} = $res[0];
+}
+$gettruthfiles->finish();
+print "input files: $ncal, truth: $ntruth\n";
+foreach my $segment (sort keys %trkhash)
+{
+    if (! exists $truthhash{$segment})
     {
-	print "did not find $truthfile\n";
 	next;
     }
-    print "found $truthfile\n";
-    my $lfn = basename($file);
-    print "found $file\n";
+
+    my $lfn = $trkhash{$segment};
+    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -65,7 +76,7 @@ while (my $file = <F>)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $file, $truthfile, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{$segment}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -88,4 +99,5 @@ while (my $file = <F>)
 	}
     }
 }
-close(F);
+
+$dbh->disconnect;
