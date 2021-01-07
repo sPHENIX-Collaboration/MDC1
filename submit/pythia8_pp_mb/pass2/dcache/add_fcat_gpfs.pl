@@ -91,7 +91,7 @@ while (my $file = <F>)
 	    $runnumber = int($2);
 	    $segment = int($3);
 	}
-	my @sp1 = split(/\_sHijing/,$lfn);
+	my @sp1 = split(/\_pythia8/,$lfn);
 	if (! defined $test)
 	{
 	    $insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]);
