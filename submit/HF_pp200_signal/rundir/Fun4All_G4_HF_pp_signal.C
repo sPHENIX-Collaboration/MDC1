@@ -332,8 +332,8 @@ int Fun4All_G4_HF_pp_signal(
   
   Enable::KFPARTICLE = true;
   //Enable::KFPARTICLE_VERBOSITY = 1;
-  Enable::KFPARTICLE_TRUTH_MATCH = true;
-  Enable::KFPARTICLE_SAVE_NTUPLE = true;
+  //Enable::KFPARTICLE_TRUTH_MATCH = true;
+  //Enable::KFPARTICLE_SAVE_NTUPLE = true;
 
   Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
