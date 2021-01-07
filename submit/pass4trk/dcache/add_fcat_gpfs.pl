@@ -25,7 +25,7 @@ my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_f
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype) values (?,?,?,?,'mdc1',?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc1'");
 my $updatedataset = $dbh->prepare("update datasets set size = ? where filename=?");
-open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort |");
+open(F,"find $indir -maxdepth 1 -type f -name 'DST_TRACKS_sHijing_0_12fm*.root' | sort |");
 while (my $file = <F>)
 {
     chomp $file;
