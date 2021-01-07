@@ -112,7 +112,9 @@ $removethese{$dsttype} = 1;
 foreach my $rem (keys %removethese)
 {
     my $condor_subdir = sprintf("%s/%s/condor/log",$topdir,$productionsubdir{$rem});
-    my $condorfile = sprintf("%s/condor-%010d-%05d.job",$condor_subdir,1,$segment);
+    my $condorjobfile = sprintf("%s/condor-%010d-%05d.job",$condor_subdir,1,$segment);
+    my $condoroutfile = sprintf("%s/condor-%010d-%05d.out",$condor_subdir,1,$segment);
+    my $condorerrfile = sprintf("%s/condor-%010d-%05d.err",$condor_subdir,1,$segment);
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$systemstring,1,$segment);
     $getfilename->execute($rem,'%'.$systemstring.'%',$segment);
     if ($getfilename->rows == 1)
@@ -143,16 +145,18 @@ foreach my $rem (keys %removethese)
 	}
 
     }
-    if (-f $condorfile)
+    if (-f $condorjobfile)
     {
 	if (defined $kill)
 	{
-	    print "removing $condorfile\n";
-	    unlink $condorfile;
+	    print "removing $condorjobfile, $condorerrfile, $condoroutfile\n";
+	    unlink $condorjobfile;
+	    unlink $condorerrfile;
+	    unlink $condoroutfile;
 	}
 	else
 	{
-	    print "would remove $condorfile\n";
+	    print "would remove $condorjobfile, $condorerrfile, $condoroutfile\n";
 	}
     }
 }
