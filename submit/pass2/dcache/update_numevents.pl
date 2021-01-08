@@ -32,14 +32,6 @@ print F "}\n";
 print F "#endif\n";
 close(F);
 
-# first go over files in our gpfs output dir
-my $indirfile = "../condor/outdir.txt";
-if (! -f $indirfile)
-{
-    die "could not find $indirfile";
-}
-my $indir = `cat $indirfile`;
-chomp $indir;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select events from datasets where filename = ?");
