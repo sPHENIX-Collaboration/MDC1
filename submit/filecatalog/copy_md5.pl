@@ -35,7 +35,10 @@ while (my @res = $getfiles->fetchrow_array())
 	    if ($size != $fres[2])
 	    {
 		print "file size mismatch for $lfn, $fres[1]\n";
-		die;
+		if (defined $update)
+		{
+		    die;
+		}
 	    }
 	}
 	if (! defined $fres[3])
