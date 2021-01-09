@@ -32,41 +32,10 @@ print F "}\n";
 print F "#endif\n";
 close(F);
 
-# first go over files in our gpfs output dir
-my $indirfile = "../condor/outdir.txt";
-if (! -f $indirfile)
-{
-    die "could not find $indirfile";
-}
-my $indir = `cat $indirfile`;
-chomp $indir;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select events from datasets where filename = ?");
 my $updateevents =  $dbh->prepare("update datasets set events=? where filename=?") || die $DBI::error;
-
-open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
-while (my $file = <F>)
-{
-    chomp $file;
-    my $filename = basename($file);
-    $chkfile->execute($filename);
-    if ($chkfile->rows > 0)
-    {
-	my @res = $chkfile->fetchrow_array();
-	if ($res[0] < 0)
-	{
-	    my $entries = getentries($file);
-	    if ($entries >= 0)
-	    {
-		print "updating $filename with $entries\n";
-		$updateevents->execute($entries,$filename) || die $DBI::error;
-	    }
-	}
-    }
-}
-#die;
-
 
 my $getfiles = $dbh->prepare("select filename from datasets where (dsttype = 'DST_BBC_G4HIT' or dsttype ='DST_CALO_G4HIT' or dsttype ='DST_TRKR_G4HIT' or dsttype = 'DST_TRUTH_G4HIT' or dsttype ='DST_VERTEX') and (events is null or events < 0) and filename like '%sHijing_0_488fm%' order by filename") || die $DBI::error;
 
