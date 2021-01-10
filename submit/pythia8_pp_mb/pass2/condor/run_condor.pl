@@ -56,7 +56,7 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.sphnxpro\n";
 print F "request_memory = 2GB\n";
 print F "Priority 	= 21\n";
-print F "concurrency_limits = PHENIX_100\n";
+print F "concurrency_limits = PHENIX_500\n";
 #print F "concurrency_limits = DCACHEXFER\n";
 print F "Requirements = CPU_Experiment == \"sdcc\"\n";
 print F "job_lease_duration = 3600\n";
