@@ -22,7 +22,7 @@ void CreateDstOutput(int runnumber, int segment)
 
   char segrun[100];
   snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = "TEST_DST_BBC_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
+  string FullOutFile = "DST_BBC_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -30,7 +30,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "TEST_DST_TRKR_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -40,7 +40,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "TEST_DST_CALO_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_CALO_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -49,7 +49,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "TEST_DST_TRUTH_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRUTH_G4HIT_sHijing_0_488fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");
@@ -58,7 +58,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "TEST_DST_VERTEX_sHijing_0_488fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_VERTEX_sHijing_0_488fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("GlobalVertexMap");
