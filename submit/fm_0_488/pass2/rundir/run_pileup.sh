@@ -1,8 +1,15 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.2
-
 echo running: run_pileup.sh $*
+
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR
+  rsync -av ${HOME}/MDC1/submit/fm_0_488/pass2/rundir/* .
+else
+ echo condor scratch NOT set
+fi
 
 # arguments 
 # $1: number of output events
