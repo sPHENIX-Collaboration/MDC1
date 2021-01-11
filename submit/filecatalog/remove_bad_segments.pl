@@ -95,26 +95,27 @@ else
 }
 
 my %productionsubdir = (
-"DST_BBC_G4HIT" => "pass2",
-"DST_CALO_CLUSTER" => "pass3calo",
-"DST_CALO_G4HIT"=> "pass2",
-"DST_TRACKS" => "pass4trk",
-"DST_TRKR_CLUSTER" => "pass3trk",
-"DST_TRKR_G4HIT" => "pass2",
-"DST_TRUTH_G4HIT" => "pass2",
-"DST_VERTEX" => "pass2",
-"G4Hits" => "pass1"
+    "DST_BBC_G4HIT" => "pass2",
+    "DST_CALO_CLUSTER" => "pass3calo",
+    "DST_CALO_G4HIT"=> "pass2",
+    "DST_TRACKS" => "pass4trk",
+    "DST_TRKR_CLUSTER" => "pass3trk",
+    "DST_TRKR_G4HIT" => "pass2",
+    "DST_TRUTH_G4HIT" => "pass2",
+    "DST_VERTEX" => "pass2",
+    "G4Hits" => "pass1"
     );
 
+my %removecondorfiles = ();
 my %removethese = ();
 $removethese{$dsttype} = 1;
 &looparray($dsttype);
 foreach my $rem (keys %removethese)
 {
     my $condor_subdir = sprintf("%s/%s/condor/log",$topdir,$productionsubdir{$rem});
-    my $condorjobfile = sprintf("%s/condor-%010d-%05d.job",$condor_subdir,1,$segment);
-    my $condoroutfile = sprintf("%s/condor-%010d-%05d.out",$condor_subdir,1,$segment);
-    my $condorerrfile = sprintf("%s/condor-%010d-%05d.err",$condor_subdir,1,$segment);
+    $removecondorfiles{sprintf("%s/condor-%010d-%05d.job",$condor_subdir,1,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/condor-%010d-%05d.out",$condor_subdir,1,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/condor-%010d-%05d.err",$condor_subdir,1,$segment)} = 1;
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$systemstring,1,$segment);
     $getfilename->execute($rem,'%'.$systemstring.'%',$segment);
     if ($getfilename->rows == 1)
@@ -145,18 +146,19 @@ foreach my $rem (keys %removethese)
 	}
 
     }
-    if (-f $condorjobfile)
+}
+foreach my $condorfile (keys %removecondorfiles)
+{
+    if (-f $condorfile)
     {
 	if (defined $kill)
 	{
-	    print "removing $condorjobfile, $condorerrfile, $condoroutfile\n";
-	    unlink $condorjobfile;
-	    unlink $condorerrfile;
-	    unlink $condoroutfile;
+	    print "removing $condorfile\n";
+	    unlink $condorfile;
 	}
 	else
 	{
-	    print "would remove $condorjobfile, $condorerrfile, $condoroutfile\n";
+	    print "would remove $condorfile\n";
 	}
     }
 }
