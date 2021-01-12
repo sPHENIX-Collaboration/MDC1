@@ -2,9 +2,17 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.1
 
 echo running: run_hepmc.sh $*
+
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR
+  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm0_488/pass1/rundir/* .
+else
+ echo condor scratch NOT set
+fi
 
 # arguments 
 # $1: number of events

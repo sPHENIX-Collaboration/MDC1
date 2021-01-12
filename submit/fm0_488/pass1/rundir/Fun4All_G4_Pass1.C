@@ -212,12 +212,12 @@ int Fun4All_G4_Pass1(
 
   if (Enable::PRODUCTION)
   {
-    Production_CreateOutputDir();
+     Production_CreateOutputDir();
   }
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
+    string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
