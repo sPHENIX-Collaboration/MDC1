@@ -11,7 +11,8 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 
 sub getmd5;
 sub getentries;
-
+#only created if initial copy fails
+my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/backup");
 
 my $outdir = ".";
 my $test;
@@ -25,6 +26,7 @@ if (! -f $file)
     print "$file not found\n";
     die;
 }
+my $lfn = basename($file);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -73,6 +75,18 @@ else
     print "cmd: $copycmd\n";
     system($copycmd);
 }
+if (! -f $outfile)
+{
+    if (! -d $backupdir)
+    {
+	mkpath($backupdir);
+    }
+
+    $outfile = sprintf("%s/%s",$backupdir,$lfn);
+    $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+    $outhost = 'gpfs';
+    system($copycmd);
+}
 
 my $outsize = $size;
 if (! defined $test)
@@ -86,7 +100,6 @@ if ($outsize != $size)
     print STDERR "filesize mismatch between origin $file ($size) and copy $outfile ($outsize)\n";
     die;
 }
-my $lfn = basename($file);
 # first files table
 $chkfile->execute($outfile);
 if ($chkfile->rows > 0)
