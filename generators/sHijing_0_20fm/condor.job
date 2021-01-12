@@ -1,0 +1,8 @@
+Universe        = vanilla
+Executable      = run_hijing.sh
+Log             = /tmp/mdc1/shijing_0_20fm.log
+PeriodicHold    = (NumJobStarts>=1 && JobStatus == 1)
+accounting_group = group_sphenix.sphnxpro
+Priority        = 250
+job_lease_duration = 3600
+Queue 1
