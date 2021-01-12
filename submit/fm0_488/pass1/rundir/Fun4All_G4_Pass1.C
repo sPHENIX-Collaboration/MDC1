@@ -212,7 +212,8 @@ int Fun4All_G4_Pass1(
 
   if (Enable::PRODUCTION)
   {
-    Production_CreateOutputDir();
+     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
+//    Production_CreateOutputDir();
   }
 
   if (Enable::DSTOUT)
