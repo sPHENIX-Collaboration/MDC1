@@ -7,24 +7,22 @@ use DBI;
 
 use Getopt::Long;
 
-sub checkdownstream;
-
-my $fmrange = "0_488fm";
-my %downfiles = ();
-$downfiles{"DST_BBC_G4HIT"} = 1;
-$downfiles{"DST_CALO_G4HIT"} = 1;
-$downfiles{"DST_TRKR_G4HIT"} = 1;
-$downfiles{"DST_TRUTH_G4HIT"} = 1;
-$downfiles{"DST_VERTEX"} = 1;
-
+my $fmrange = "sHijing_0_488";
 my $dokill;
-GetOptions('kill'=>\$dokill);
-if ( $#ARGV < 0 )
+my $dsttype;
+GetOptions('kill'=>\$dokill, "dsttype:s"=>\$dsttype);
+if ( $#ARGV < 0 || ! defined $dsttype)
 {
 
     print "usage: safe_delete.pl <number of files, 0 = all>\n";
     print "flags:\n";
     print "-kill   remove file for real\n";
+    print "-dsttype  dst type\n";
+    print "  DST_BBC_G4HIT\n";
+    print "  DST_CALO_G4HIT\n";
+    print "  DST_TRKR_G4HIT\n";
+    print "  DST_TRUTH_G4HIT\n";
+    print "  DST_VERTEX\n";
     exit(-1);
 }
 
@@ -46,12 +44,12 @@ if (! defined $dokill)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and full_host_name = 'dcache' and md5 is not null");
+my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and full_host_name = 'dcache' and full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/PileUp/%' and md5 is not null");
 my $getdataset = $dbh->prepare("select runnumber,segment from datasets where filename=?");
 my $checkdataset = $dbh->prepare("select filename from datasets where runnumber=? and segment = ? and dsttype=?");
 my $delfcat = $dbh->prepare("delete from files where lfn=? and full_file_path=?");
 
-open(F,"find $indir -maxdepth 1 -type f -name '*.root' | sort|");
+open(F,"find $indir -maxdepth 1 -type f -name '$dsttype*.root' | sort|");
 while (my $file = <F>)
 {
     if ($file !~ /$fmrange/)
@@ -59,6 +57,7 @@ while (my $file = <F>)
 	next;
     }
     chomp $file;
+    print "file: $file\n";
     my $origsize = stat($file)->size;
     my $lfn = basename($file);
     $getinfo->execute($lfn);
@@ -66,9 +65,9 @@ while (my $file = <F>)
     {
 	next;
     }
-    elsif ($getinfo->rows > 2)
+    elsif ($getinfo->rows > 1)
     {
-	print "more than two rows for $lfn in dcache check it\n";
+	print "more than one rows for $lfn in dcache check it\n";
 	die;
     }
     my @res = $getinfo->fetchrow_array();
@@ -89,11 +88,11 @@ while (my $file = <F>)
 	print "dcache size for $lfn: $dcsize not from file catalog: $res[1]\n";
 	next;
     }
-    my $isokay = checkdownstream($lfn);
-    if ($isokay == 0)
-    {
-	next;
-    }
+#    my $isokay = checkdownstream($lfn);
+#    if ($isokay == 0)
+#    {
+#	next;
+#    }
     if (defined $dokill)
     {
 	print "delete $file\n";
@@ -118,19 +117,3 @@ $getdataset->finish();
 $checkdataset->finish();
 $delfcat->finish();
 $dbh->disconnect;
-
-sub checkdownstream
-{
-    my $infile = basename($_[0]);
-    $getdataset->execute($infile);
-    my @res = $getdataset->fetchrow_array();
-    foreach my $downfiletype (keys %downfiles)
-    {
-	$checkdataset->execute($res[0],$res[1],$downfiletype);
-	if ($checkdataset->rows == 0)
-	{
-	    return 0;
-	}
-    }
-    return 1;
-}
