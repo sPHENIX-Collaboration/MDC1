@@ -22,6 +22,7 @@ if ($system < 1 || $system > 3)
 }
 
 my $systemstring;
+my $gpfsdir = "sHijing_HepMC";
 if ($system == 1)
 {
     $systemstring = "sHijing_0_12fm";
@@ -33,6 +34,7 @@ elsif ($system == 2)
 elsif ($system == 3)
 {
     $systemstring = "pythia8_mb";
+    $gpfsdir = "pythia8_pp";
 }
 else
 {
@@ -45,7 +47,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getdsttypes = $dbh->prepare("select distinct(dsttype) from datasets where filename like '%$systemstring%' order by dsttype");
 
 my %topdcachedir = ();
-$topdcachedir{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC"} = 1;
+$topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/%s",$gpfsdir)} = 1;
 #$topdcachedir{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC"} = 1;
 
 if ($#ARGV < 0)
@@ -84,7 +86,7 @@ foreach my $dcdir (keys  %topdcachedir)
  print "entries for $dcdir: $rows\n";
  $getsegsdc->finish();
 }
-my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/%'");
+my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/$gpfsdir/%'");
 #my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/%'");
 for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 {
