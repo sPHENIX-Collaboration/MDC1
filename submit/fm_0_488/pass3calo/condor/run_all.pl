@@ -64,13 +64,16 @@ foreach my $segment (sort keys %calohash)
     }
 
     my $lfn = $calohash{$segment};
-    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
-
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
+	{
+	    next;
+	}
 	my $tstflag="";
 	if (defined $test)
 	{
@@ -99,5 +102,5 @@ foreach my $segment (sort keys %calohash)
 	}
     }
 }
-
+$chkfile->finish();
 $dbh->disconnect;
