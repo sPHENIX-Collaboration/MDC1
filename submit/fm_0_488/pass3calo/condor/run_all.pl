@@ -55,7 +55,7 @@ while (my @res = $getvtxfiles->fetchrow_array())
     $vtxhash{$res[1]} = $res[0];
 }
 $getvtxfiles->finish();
-print "input files: $ncal, vtx: $nvtx\n";
+#print "input files: $ncal, vtx: $nvtx\n";
 foreach my $segment (sort keys %calohash)
 {
     if (! exists $vtxhash{$segment})
