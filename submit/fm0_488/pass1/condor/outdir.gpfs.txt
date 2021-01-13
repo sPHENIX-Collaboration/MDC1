@@ -1,1 +1,1 @@
-/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/G4Hits/data
+/sphenix/data/data02/sphnxpro/MDC1/sHijing_HepMC/G4Hits/data
