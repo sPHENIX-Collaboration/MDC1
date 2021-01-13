@@ -4,6 +4,14 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.2
 
 echo running: run_pass3calo.sh $*
 
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR
+  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3calo/rundir/* .
+else
+ echo condor scratch NOT set
+fi
+
 # arguments 
 # $1: number of events
 # $2: calo g4hits input file
