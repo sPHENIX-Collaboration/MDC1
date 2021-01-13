@@ -47,6 +47,13 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_488fm%' order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_12fm%'");
+$getbkglastsegment->execute();
+my @res1 = $getbkglastsegment->fetchrow_array();
+my $lastsegment = $res1[0];
+$getbkglastsegment->finish();
+
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())
@@ -84,7 +91,12 @@ while (my @res = $getfiles->fetchrow_array())
 
 	for (my $cnt = $segment; $cnt <=$segment+1; $cnt++)
 	{
-	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$cnt);
+	    my $bkgseg = $cnt;
+	    while ($bkgseg > $lastsegment)
+	    {
+		$bkgseg = $bkgseg - $lastsegment;
+	    }
+	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
