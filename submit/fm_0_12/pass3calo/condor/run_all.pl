@@ -5,6 +5,7 @@ use warnings;
 use File::Path;
 use File::Basename;
 use Getopt::Long;
+use DBI;
 
 
 my $outevents = 0;
@@ -30,42 +31,55 @@ my $outdir = `cat outdir.txt`;
 chomp $outdir;
 mkpath($outdir);
 
-my $indirfile = sprintf("../../pass2/condor/outdir.txt");
-if (! -f $indirfile)
-{
-    print "could not find file with input directory $indirfile\n";
-    exit(1);
-}
-my $indir = `cat $indirfile`;
-chomp $indir;
 
+my %calohash = ();
+my %vtxhash = ();
+
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%sHijing_0_12fm%' order by filename") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%sHijing_0_12fm%'");
 my $nsubmit = 0;
-open(F,"find $indir -maxdepth 1 -type f -name 'DST_CALO_G4HIT*.root' | sort |");
-while (my $file = <F>)
+$getfiles->execute() || die $DBI::error;
+my $ncal = $getfiles->rows;
+while (my @res = $getfiles->fetchrow_array())
 {
-    chomp  $file;
-    my $vertexfile = $file;
-    $vertexfile =~ s/DST_CALO_G4HIT/DST_VERTEX/;
-    if (! -f $vertexfile)
+    $calohash{$res[1]} = $res[0];
+}
+$getfiles->finish();
+$getvtxfiles->execute() || die $DBI::error;
+my $nvtx = $getvtxfiles->rows;
+while (my @res = $getvtxfiles->fetchrow_array())
+{
+    $vtxhash{$res[1]} = $res[0];
+}
+$getvtxfiles->finish();
+#print "input files: $ncal, vtx: $nvtx\n";
+foreach my $segment (sort keys %calohash)
+{
+    if (! exists $vtxhash{$segment})
     {
-	print "did not find $vertexfile\n";
 	next;
     }
-    print "found $vertexfile\n";
-    my $lfn = basename($file);
-    print "found $file\n";
+
+    my $lfn = $calohash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_12fm-%010d-%05d.root",$runnumber,$segment);
-
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
+	{
+	    next;
+	}
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $file, $vertexfile, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{$segment}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -88,4 +102,5 @@ while (my $file = <F>)
 	}
     }
 }
-close(F);
+$chkfile->finish();
+$dbh->disconnect;
