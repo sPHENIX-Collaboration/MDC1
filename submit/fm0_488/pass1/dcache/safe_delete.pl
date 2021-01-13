@@ -70,7 +70,7 @@ while (my $file = <F>)
     my @res = $getinfo->fetchrow_array();
     if ($res[1] != $origsize)
     {
-	print "size mismatch gpfs-dcache for $lfn:  $origsize, $res[1]\n";
+	print "size mismatch gpfs-dcache for $lfn:  $origsize, $res[2]: $res[1]\n";
 	next;
     }
     my $dcachefile = $res[2];
