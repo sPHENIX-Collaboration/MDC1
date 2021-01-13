@@ -11,7 +11,7 @@
 
 namespace OUTPUTMANAGER
 {
-set<string> outfiles;
+  set<string> outfiles;
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out);
@@ -22,7 +22,7 @@ void CreateDstOutput(int runnumber, int segment)
 
   char segrun[100];
   snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = DstOut::OutputDir + "/" + "DST_BBC_G4HIT_sHijing_0_12fm-" + segrun + ".root";;
+  string FullOutFile = "DST_BBC_G4HIT_sHijing_0_12fm-" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -30,7 +30,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = DstOut::OutputDir + "/" + "DST_TRKR_G4HIT_sHijing_0_12fm-" + segrun + ".root";;
+  FullOutFile = "DST_TRKR_G4HIT_sHijing_0_12fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -40,7 +40,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = DstOut::OutputDir + "/" + "DST_CALO_G4HIT_sHijing_0_12fm-" + segrun + ".root";;
+  FullOutFile = "DST_CALO_G4HIT_sHijing_0_12fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -49,7 +49,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = DstOut::OutputDir + "/" + "DST_TRUTH_G4HIT_sHijing_0_12fm-" + segrun + ".root";;
+  FullOutFile = "DST_TRUTH_G4HIT_sHijing_0_12fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");
@@ -58,7 +58,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = DstOut::OutputDir + "/" + "DST_VERTEX_sHijing_0_12fm-" + segrun + ".root";;
+  FullOutFile = "DST_VERTEX_sHijing_0_12fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("GlobalVertexMap");
@@ -68,20 +68,34 @@ void CreateDstOutput(int runnumber, int segment)
 
 void AddCommonNodes(Fun4AllOutputManager *out)
 {
-out->AddNode("Sync");
-out->AddNode("EventHeader");
-return;
+  out->AddNode("Sync");
+  out->AddNode("EventHeader");
+  return;
 }
 
 void DstOutput_move()
 {
+  string copyscript = "copyscript.pl";
+  ifstream f(copyscript);
+  bool scriptexists = f.good();
+  f.close();
   if (Enable::DSTOUT)
   {
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
-   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
-    gSystem->Exec(mvcmd.c_str());
-  }
+//   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      string mvcmd;
+      if (scriptexists)
+      {
+//        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
+        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+      }
+      else
+      {
+	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+      }
+      gSystem->Exec(mvcmd.c_str());
+    }
   }
 }
 

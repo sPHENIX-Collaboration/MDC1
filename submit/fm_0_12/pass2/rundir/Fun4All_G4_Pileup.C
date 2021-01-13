@@ -52,7 +52,7 @@ int Fun4All_G4_Pileup(
   int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
-    Production_CreateOutputDir();
+    PRODUCTION::SaveOutputDir = DstOut::OutputDir;
   }
 
   // signal input manager
