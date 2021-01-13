@@ -61,21 +61,16 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_sHijing_0_488fm-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
-#	    print "checking for $outfilename\n";
-	    if (! -f  $outfilename)
+            my $lfn =  sprintf("%s_sHijing_0_488fm-%010d-%05d.root",$type,$runnumber,$segment);
+	    $chkfile->execute($lfn);
+	    if ($chkfile->rows > 0)
 	    {
-		my $outlfn = basename($outfilename);
-		$chkfile->execute($outlfn);
-		if ($chkfile->rows > 0)
-		{
-		    next;
-		}
-		else
-		{
-		    $foundall = 0;
-		    last;
-		}
+		next;
+	    }
+	    else
+	    {
+		$foundall = 0;
+		last;
 	    }
 	}
 	if ($foundall == 1)
