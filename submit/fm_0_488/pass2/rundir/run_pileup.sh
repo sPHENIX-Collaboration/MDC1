@@ -6,7 +6,7 @@ echo running: run_pileup.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
   cd $_CONDOR_SCRATCH_DIR
-  rsync -av ${HOME}/MDC1/submit/fm_0_488/pass2/rundir/* .
+  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass2/rundir/* .
 else
  echo condor scratch NOT set
 fi
