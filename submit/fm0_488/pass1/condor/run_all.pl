@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use File::Path;
 use Getopt::Long;
+use DBI;
 
 my $test;
 my $incremental;
@@ -17,6 +18,9 @@ if ($#ARGV < 0)
     exit(1);
 }
 
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
 my $maxsubmit = $ARGV[0];
 my $runnumber = 1;
@@ -40,11 +44,9 @@ for (my $segment=0; $segment<1000; $segment++)
     my $sequence = $segment*200;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-        
 	my $outfile = sprintf("G4Hits_sHijing_0_488fm-%010d-%05d.root",$runnumber,$sequence);
-	my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
-	print "out: $fulloutfile\n";
-	if (! -f $fulloutfile)
+	$chkfile->execute($outfile);
+	if ($chkfile->rows == 0)
 	{
 	    my $tstflag="";
 	    if (defined $test)
@@ -65,15 +67,11 @@ for (my $segment=0; $segment<1000; $segment++)
 	    {
 		$nsubmit++;
 	    }
-	    if ($nsubmit > $maxsubmit)
+	    if ($nsubmit >= $maxsubmit)
 	    {
 		print "maximum number of submissions reached, exiting\n";
 		exit(0);
 	    }
-	}
-	else
-	{
-	    print "output file already exists\n";
 	}
         $sequence++;
     }
