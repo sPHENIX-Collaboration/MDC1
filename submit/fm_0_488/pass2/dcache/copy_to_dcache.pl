@@ -8,7 +8,7 @@ use Getopt::Long;
 
 sub write_copyfile();
 
-my $nfiles = 10000;
+my $nfiles = 5000;
 
 my $dcache = 0;
 my $dsttype = "all";
