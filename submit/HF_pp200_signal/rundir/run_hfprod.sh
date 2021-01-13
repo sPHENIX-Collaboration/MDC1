@@ -1,10 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-#source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.1
-source /opt/sphenix/core/bin/sphenix_setup.sh -n new
-
-#export WORKSPACE=/sphenix/u/cdean/software
-#export ROOT_INCLUDE_PATH=${WORKSPACE}/macros/common:${ROOT_INCLUDE_PATH}
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.4
 
 echo running: run_hfprod.sh $*
 
@@ -16,7 +12,7 @@ echo running: run_hfprod.sh $*
 # $5: output dir
 
 echo 'here comes your environment'
-printenv
+#printenv
 echo arg1 \(events\) : $1
 echo arg2 \(charm or bottom\): $2
 echo arg3 \(output file\): $3

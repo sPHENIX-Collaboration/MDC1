@@ -21,7 +21,7 @@ if ($#ARGV < 0)
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $runnumber = 1;
-my $events = 250;
+my $events = 2000;
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
 open(F,"outdir.txt");
