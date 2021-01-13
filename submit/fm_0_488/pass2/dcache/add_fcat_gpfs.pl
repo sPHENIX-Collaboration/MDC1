@@ -9,7 +9,7 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-my $indirfile = "../condor/outdir.txt";
+my $indirfile = "../condor/outdir.gpfs.txt";
 if (! -f $indirfile)
 {
     die "could not find $indirfile";
