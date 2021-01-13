@@ -26,7 +26,7 @@ my $updatedataset = $dbh->prepare("update datasets set size = ? where filename=?
 foreach my $topdcachedir (keys %topdcachehash)
 {
     print "checking $topdcachedir for new files\n";
-    open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' | sort |");
+    open(F,"find $topdcachedir -maxdepth 1 -type f -name '*.root' |");
     while (my $file = <F>)
     {
 	if ($file !~ /$fmrange/)
