@@ -28,7 +28,7 @@ if ( $#ARGV < 0 || ! defined $dsttype)
 
 my $ndel = $ARGV[0];
 my $delfiles = 0;
-my $indirfile = "../condor/outdir.txt";
+my $indirfile = "../condor/outdir.gpfs.txt";
 if (! -f $indirfile)
 {
     die "could not find $indirfile";
