@@ -8,11 +8,22 @@ echo running: run_pass3trk.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
-  cd $_CONDOR_SCRATCH_DIR
-#  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3trk/rundir/* .
-  rsync -av /sphenix/user/sphnxpro/MDC1/submit/fm_0_12/pass3trk/rundir/* .
+    cd $_CONDOR_SCRATCH_DIR
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3trk/rundir/* .
+    getinputfiles.pl $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
+    getinputfiles.pl $3
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
 else
- echo condor scratch NOT set
+    echo condor scratch NOT set
 fi
 
 # arguments 
