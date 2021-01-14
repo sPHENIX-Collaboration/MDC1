@@ -29,6 +29,8 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+#include <stdlib.h>
+
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -59,6 +61,8 @@ int Fun4All_G4_HF_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  //int seedValue = 491258969;
+  //rc->set_IntFlag("RANDOMSEED", seedValue);
 
   //===============
   // Input options
@@ -79,7 +83,7 @@ int Fun4All_G4_HF_pp_signal(
   // Further choose to embed newly simulated events to a previous simulation. Not compatible with `readhits = true`
   // In case embedding into a production output, please double check your G4Setup_sPHENIX.C and G4_*.C consistent with those in the production macro folder
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
-  //  Input::EMBED = true;
+  //Input::EMBED = true;
   INPUTEMBED::filename = embed_input_file;
 
   // Input::SIMPLE = true;
@@ -203,7 +207,7 @@ int Fun4All_G4_HF_pp_signal(
   if (Input::HEPMC)
   {
     INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(100e-4, 100e-4, 8, 0);  //optional collision smear in space, time
-                                                                                           //    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
+    // INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
     // //optional choice of vertex distribution function in space, time
     INPUTMANAGER::HepMCInputManager->set_vertex_distribution_function(PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus);
     //! embedding ID for the event
@@ -332,14 +336,16 @@ int Fun4All_G4_HF_pp_signal(
   
   Enable::KFPARTICLE = true;
   //Enable::KFPARTICLE_VERBOSITY = 1;
-  Enable::KFPARTICLE_TRUTH_MATCH = true;
-  Enable::KFPARTICLE_SAVE_NTUPLE = true;
+  //Enable::KFPARTICLE_TRUTH_MATCH = true;
+  //Enable::KFPARTICLE_SAVE_NTUPLE = true;
+  KFParticleBaseCut::maxTrackchi2nDoF = 10;
+  KFParticleBaseCut::minTrackIPchi2 = 0;
 
   Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
   Enable::JETS = true;
   Enable::JETS_EVAL = Enable::JETS && true;
-  Enable::JETS_QA = Enable::JETS and Enable::QA && true;
+  Enable::JETS_QA = Enable::JETS and Enable::QA && false;
 
   // HI Jet Reco for p+Au / Au+Au collisions (default is false for
   // single particle / p+p-only simulations, or for p+Au / Au+Au
@@ -484,7 +490,15 @@ int Fun4All_G4_HF_pp_signal(
   //----------------------
   // Simulation evaluation
   //----------------------
-  string outputroot = outputFile;
+  string outqadir = "./";
+  if (!outdir.empty()) 
+  {
+    outqadir = outdir + "/QA/";
+    string makeDirectory = "mkdir " + outqadir;
+    system(makeDirectory.c_str());
+  }
+
+  string outputroot = outqadir + outputFile;
   string remove_this = ".root";
   size_t pos = outputroot.find(remove_this);
   if (pos != string::npos)
@@ -492,19 +506,19 @@ int Fun4All_G4_HF_pp_signal(
     outputroot.erase(pos, remove_this.length());
   }
 
-  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_g4svtx_eval.root");
+  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_" + HF_Q_filter + "_g4svtx_eval.root");
 
-  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_g4cemc_eval.root");
+  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_" + HF_Q_filter + "_g4cemc_eval.root");
 
-  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_g4hcalin_eval.root");
+  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_" + HF_Q_filter + "_g4hcalin_eval.root");
 
-  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_g4hcalout_eval.root");
+  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_" + HF_Q_filter + "_g4hcalout_eval.root");
 
-  if (Enable::FEMC_EVAL) FEMC_Eval(outputroot + "_g4femc_eval.root");
+  if (Enable::FEMC_EVAL) FEMC_Eval(outputroot + "_" + HF_Q_filter + "_g4femc_eval.root");
 
-  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_g4jet_eval.root");
+  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_" + HF_Q_filter + "_g4jet_eval.root");
 
-  if (Enable::DSTREADER) G4DSTreader(outputroot + "_DSTReader.root");
+  if (Enable::DSTREADER) G4DSTreader(outputroot + "_" + HF_Q_filter + "_DSTReader.root");
 
   if (Enable::USER) UserAnalysisInit();
 
@@ -512,7 +526,7 @@ int Fun4All_G4_HF_pp_signal(
   // Run KFParticle on evt
   //======================
   if (Enable::KFPARTICLE) KFParticle_D0_Reco();
-  //if (Enable::KFPARTICLE && Input::LAMBDAC) KFParticle_Lambdac_Reco();
+  if (Enable::KFPARTICLE) KFParticle_Lambdac_Reco();
      
   //----------------------
   // Standard QAs
