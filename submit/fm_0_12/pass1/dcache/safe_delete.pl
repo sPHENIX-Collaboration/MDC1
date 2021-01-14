@@ -121,6 +121,7 @@ $dbh->disconnect;
 
 sub checkdownstream
 {
+    return 1;
     my $infile = basename($_[0]);
     $getdataset->execute($infile);
     my @res = $getdataset->fetchrow_array();
