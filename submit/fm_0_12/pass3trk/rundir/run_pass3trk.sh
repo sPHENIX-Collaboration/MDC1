@@ -2,9 +2,18 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.3
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.4
 
 echo running: run_pass3trk.sh $*
+
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR
+#  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3trk/rundir/* .
+  rsync -av /sphenix/user/sphnxpro/MDC1/submit/fm_0_12/pass3trk/rundir/* .
+else
+ echo condor scratch NOT set
+fi
 
 # arguments 
 # $1: number of events
