@@ -7,6 +7,18 @@ if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
   cd $_CONDOR_SCRATCH_DIR
   rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass2/rundir/* .
+    getinputfiles.pl $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
+    getinputfiles.pl -filelist $3
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
 else
  echo condor scratch NOT set
 fi
