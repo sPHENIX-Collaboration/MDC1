@@ -55,7 +55,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
     $truthhash{$res[1]} = $res[0];
 }
 $gettruthfiles->finish();
-print "input files: $ncal, truth: $ntruth\n";
+#print "input files: $ncal, truth: $ntruth\n";
 foreach my $segment (sort keys %trkhash)
 {
     if (! exists $truthhash{$segment})
@@ -70,6 +70,11 @@ foreach my $segment (sort keys %trkhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_12fm-%010d-%05d.root",$runnumber,$segment);
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
+	{
+	    next;
+	}
 
 	my $tstflag="";
 	if (defined $test)
@@ -100,4 +105,5 @@ foreach my $segment (sort keys %trkhash)
     }
 }
 
+$chkfile->finish();
 $dbh->disconnect;
