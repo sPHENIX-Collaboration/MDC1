@@ -6,12 +6,23 @@ echo running: run_pass3calo.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
-  cd $_CONDOR_SCRATCH_DIR
-  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3calo/rundir/* .
+    cd $_CONDOR_SCRATCH_DIR
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_12/pass3calo/rundir/* .
+    getinputfiles.pl $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
+    getinputfiles.pl $3
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
 else
- echo condor scratch NOT set
+    echo condor scratch NOT set
 fi
-
 # arguments 
 # $1: number of events
 # $2: calo g4hits input file
