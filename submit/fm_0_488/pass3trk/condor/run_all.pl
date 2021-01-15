@@ -32,7 +32,7 @@ chomp $outdir;
 mkpath($outdir);
 
 
-my %calohash = ();
+my %trkhash = ();
 my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
@@ -45,38 +45,43 @@ $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $calohash{$res[1]} = $res[0];
+    $trkhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::error;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{$res[1]} = $res[0];
+    $truthhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
-print "input files: $ncal, truth: $ntruth\n";
-foreach my $segment (sort keys %calohash)
+#print "input files: $ncal, truth: $ntruth\n";
+foreach my $segment (sort keys %trkhash)
 {
     if (! exists $truthhash{$segment})
     {
 	next;
     }
 
-    my $lfn = $calohash{$segment};
+    my $lfn = $trkhash{$segment};
     print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
+	{
+	    next;
+	}
 
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{$segment}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -100,4 +105,5 @@ foreach my $segment (sort keys %calohash)
     }
 }
 
+$chkfile->finish();
 $dbh->disconnect;
