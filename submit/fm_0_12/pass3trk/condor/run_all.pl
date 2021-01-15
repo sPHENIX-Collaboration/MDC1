@@ -45,14 +45,14 @@ $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{$res[1]} = $res[0];
+    $trkhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::error;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{$res[1]} = $res[0];
+    $truthhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
@@ -81,7 +81,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{$segment}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
