@@ -4,6 +4,14 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.4
 
 echo running: run_hfprod.sh $*
 
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+    cd $_CONDOR_SCRATCH_DIR
+    rsync -av /sphenix/user/sphnxpro/MDC1/submit/HF_pp200_signal/rundir/* .
+else
+    echo condor scratch NOT set
+fi
+
 # arguments 
 # $1: number of events
 # $2: charm or bottom production
