@@ -24,13 +24,18 @@ if ( $#ARGV < 0 )
 
 my $ndel = $ARGV[0];
 my $delfiles = 0;
-my $indirfile = "../condor/outdir.txt";
+my $indirfile = "../condor/outdir.gpfs.txt";
 if (! -f $indirfile)
 {
     die "could not find $indirfile";
 }
 my $indir = `cat $indirfile`;
 chomp $indir;
+if ($indir =~ /pnfs/)
+{
+    print "$indirfile points to pnfs\n";
+    exit(1);
+}
 
 my %downfiles = ();
 
