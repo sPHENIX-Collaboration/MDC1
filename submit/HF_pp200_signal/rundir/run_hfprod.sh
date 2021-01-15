@@ -7,7 +7,7 @@ echo running: run_hfprod.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/user/sphnxpro/MDC1/submit/HF_pp200_signal/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/HF_pp200_signal/rundir/* .
 else
     echo condor scratch NOT set
 fi
