@@ -35,7 +35,8 @@ for (my $segment=0; $segment<1000; $segment++)
     my $sequence = $segment*100;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4sPHENIX_HeavyFlavor_%s_production-%010d-%05d.root",$quarkfilter,$runnumber,$sequence);
+    my $upperfilter = uc $quarkfilter;
+	my $outfile = sprintf("DST_HF_%s_pythia8-%010d-%05d.root",$upperfilter,$runnumber,$sequence);
 	my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
 	print "out: $fulloutfile\n";
 	if (! -f $fulloutfile)
@@ -59,7 +60,7 @@ for (my $segment=0; $segment<1000; $segment++)
 	    {
 		$nsubmit++;
 	    }
-	    if ($nsubmit > $maxsubmit)
+	    if ($nsubmit >= $maxsubmit)
 	    {
 		print "maximum number of submissions reached, exiting\n";
 		exit(0);
