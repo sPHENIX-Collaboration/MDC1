@@ -227,7 +227,7 @@ int Fun4All_G4_HF_pp_signal(
   InputRegister();
 
   // set up production relatedstuff
-  //   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -490,15 +490,8 @@ int Fun4All_G4_HF_pp_signal(
   //----------------------
   // Simulation evaluation
   //----------------------
-  string outqadir = "./";
-  if (!outdir.empty()) 
-  {
-    outqadir = outdir + "/QA/";
-    string makeDirectory = "mkdir " + outqadir;
-    system(makeDirectory.c_str());
-  }
 
-  string outputroot = outqadir + outputFile;
+  string outputroot = outputFile;
   string remove_this = ".root";
   size_t pos = outputroot.find(remove_this);
   if (pos != string::npos)
@@ -516,7 +509,7 @@ int Fun4All_G4_HF_pp_signal(
 
   if (Enable::FEMC_EVAL) FEMC_Eval(outputroot + "_" + HF_Q_filter + "_g4femc_eval.root");
 
-  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_" + HF_Q_filter + "_g4jet_eval.root");
+  if (Enable::JETS_EVAL) Jet_Eval("JET_EVAL_" + outputroot + ".root");
 
   if (Enable::DSTREADER) G4DSTreader(outputroot + "_" + HF_Q_filter + "_DSTReader.root");
 
@@ -558,7 +551,7 @@ int Fun4All_G4_HF_pp_signal(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
+    string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS)
       {
@@ -606,7 +599,7 @@ int Fun4All_G4_HF_pp_signal(
   // QA output
   //-----
 
-  if (Enable::QA) QA_Output(outputroot + "_qa.root");
+  if (Enable::QA) QA_Output("QA_" + outputroot + ".root");
 
   //-----
   // Exit
@@ -617,6 +610,10 @@ int Fun4All_G4_HF_pp_signal(
   delete se;
   if (Enable::PRODUCTION)
   {
+    Production_MoveOutput();
+    DstOut::OutputFile = "QA_" + outputroot + ".root";
+    Production_MoveOutput();
+    DstOut::OutputFile = "JET_EVAL_" + outputroot + ".root";
     Production_MoveOutput();
   }
 
