@@ -28,7 +28,7 @@ if ( $#ARGV < 0 || ! defined $dsttype)
 
 my $ndel = $ARGV[0];
 my $delfiles = 0;
-my $indirfile = "../condor/outdir.txt";
+my $indirfile = "../condor/outdir.gpfs.txt";
 if (! -f $indirfile)
 {
     die "could not find $indirfile";
@@ -36,6 +36,11 @@ if (! -f $indirfile)
 my $indir = `cat $indirfile`;
 chomp $indir;
 
+if ($indir =~ /pnfs/)
+{
+    print "indir contains pnfs - that is wrong\n";
+    exit(1);
+}
 
 if (! defined $dokill)
 {
