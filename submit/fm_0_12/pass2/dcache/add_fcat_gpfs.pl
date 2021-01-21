@@ -9,13 +9,18 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-my $indirfile = "../condor/outdir.txt";
+my $indirfile = "../condor/outdir.gpfs.txt";
 if (! -f $indirfile)
 {
     die "could not find $indirfile";
 }
 my $indir = `cat $indirfile`;
 chomp $indir;
+if ($indir =~ /pnfs/)
+{
+    print "indir contains pnfs - that is wrong\n";
+    exit(1);
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
