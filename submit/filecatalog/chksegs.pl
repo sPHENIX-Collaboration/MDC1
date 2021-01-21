@@ -11,13 +11,14 @@ my $system = 0;
 
 GetOptions("type:i"=>\$system);
 
-if ($system < 1 || $system > 3)
+if ($system < 1 || $system > 4)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
     print "    1 : hijing 0-12fm\n";
     print "    2 : hijing 0-488fm\n";
     print "    3 : pythia8 mb\n";
+    print "    4 : hijing 0-20fm\n";
     exit(0);
 }
 
@@ -35,6 +36,10 @@ elsif ($system == 3)
 {
     $systemstring = "pythia8_mb";
     $gpfsdir = "pythia8_pp";
+}
+elsif ($system == 4)
+{
+    $systemstring = "sHijing_0_20fm";
 }
 else
 {
