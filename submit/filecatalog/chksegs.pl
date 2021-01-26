@@ -11,14 +11,16 @@ my $system = 0;
 
 GetOptions("type:i"=>\$system);
 
-if ($system < 1 || $system > 4)
+if ($system < 1 || $system > 6)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
     print "    1 : hijing 0-12fm\n";
-    print "    2 : hijing 0-488fm\n";
+    print "    2 : hijing 0-4.88fm\n";
     print "    3 : pythia8 mb\n";
     print "    4 : hijing 0-20fm\n";
+    print "    5 : hijing 0-12fm pileup 0-20fm\n";
+    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
     exit(0);
 }
 
@@ -40,6 +42,14 @@ elsif ($system == 3)
 elsif ($system == 4)
 {
     $systemstring = "sHijing_0_20fm";
+}
+elsif ($system == 5)
+{
+    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_20fm";
+}
+elsif ($system == 6)
+{
+    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_20fm";
 }
 else
 {
@@ -69,7 +79,7 @@ if ($#ARGV < 0)
 
 
 my $type = $ARGV[0];
-my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;;
+my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;
 my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%'")|| die $DBI::error;
 
 $getlastseg->execute($type)|| die $DBI::error;;
