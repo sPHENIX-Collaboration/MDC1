@@ -9,7 +9,7 @@ echo running: run_hepmc.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
   cd $_CONDOR_SCRATCH_DIR
-  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm0_488/pass1/rundir/* .
+  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass1/rundir/* .
 else
  echo condor scratch NOT set
 fi
