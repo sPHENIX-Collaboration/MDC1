@@ -33,9 +33,9 @@ else
 }
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_0_20fm%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
-my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_0_20fm%' and full_host_name = 'gpfs' order by lfn");
-my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_0_20fm%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
+my $getmyfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm%' and full_file_path like '$dcpath[$dcache]%' order by lfn");
+my $getgpfsfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm%' and full_host_name = 'gpfs' order by lfn");
+my $getotherfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like 'DST_CALO_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm%' and full_file_path like '$dcpath[$otherdcache]%' order by lfn");
 my %gpfsfiles = ();
 my %myfiles = ();
 my %otherfiles = ();
