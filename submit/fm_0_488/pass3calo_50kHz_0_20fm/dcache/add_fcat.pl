@@ -13,7 +13,7 @@ my %topdcachehash = ();
 #$topdcachehash{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/CaloCluster"} = 1;
 $topdcachehash{"/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/CaloCluster"} = 1;
 
-my $fmrange = "0_488fm_50kHz_0_20fm";
+my $fmrange = "0_488fm_50kHz_bkg_0_20fm";
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?");
