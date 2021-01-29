@@ -41,10 +41,12 @@ if ($#ARGV < 0)
     print "parameters:\n";
     print "-kill : remove files for real\n";
     print "-type : production type\n";
-    print "    1 : hijing 0-12fm\n";
-    print "    2 : hijing 0-488fm\n";
+    print "    1 : hijing 0-12fm pileup 0-12fm\n";
+    print "    2 : hijing 0-488fm pileup 0-12fm\n";
     print "    3 : pythia8 mb\n";
     print "    4 : hijing 0-20fm\n";
+    print "    5 : hijing 0-12fm pileup 0-20fm\n";
+    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
     print "dsttypes:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -64,26 +66,40 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 4)
+if ($system < 1 || $system > 6)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
-    print "    1 : hijing 0-12fm\n";
-    print "    2 : hijing 0-488fm\n";
+    print "    1 : hijing 0-12fm pileup 0-12fm\n";
+    print "    2 : hijing 0-488fm pileup 0-12fm\n";
     print "    3 : pythia8 mb\n";
     print "    4 : hijing 0-20fm\n";
+    print "    5 : hijing 0-12fm pileup 0-20fm\n";
+    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
     exit(0);
 }
 
 my $systemstring;
+my $pileupdir;
+my %productionsubdir = (
+    "DST_BBC_G4HIT" => "pass2",
+    "DST_CALO_CLUSTER" => "pass3calo",
+    "DST_CALO_G4HIT"=> "pass2",
+    "DST_TRACKS" => "pass4trk",
+    "DST_TRKR_CLUSTER" => "pass3trk",
+    "DST_TRKR_G4HIT" => "pass2",
+    "DST_TRUTH_G4HIT" => "pass2",
+    "DST_VERTEX" => "pass2",
+    "G4Hits" => "pass1"
+    );
 if ($system == 1)
 {
-    $systemstring = "sHijing_0_12fm";
+    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_12fm";
     $topdir = sprintf("%s/fm_0_12",$topdir);
 }
 elsif ($system == 2)
 {
-    $systemstring = "sHijing_0_488fm";
+    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_12fm";
     $topdir = sprintf("%s/fm_0_488",$topdir);
 }
 elsif ($system == 3)
@@ -96,22 +112,34 @@ elsif ($system == 4)
     $systemstring = "sHijing_0_20fm";
     $topdir = sprintf("%s/fm_0_20",$topdir);
 }
+elsif ($system == 5)
+{
+    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_20fm";
+    $topdir = sprintf("%s/fm_0_12",$topdir);
+    $pileupdir = "_50kHz_0_20fm";
+}
+elsif ($system == 6)
+{
+    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_20fm";
+    $topdir = sprintf("%s/fm_0_488",$topdir);
+    $pileupdir = "50kHz_0_20fm";
+}
 else
 {
     die "bad type $system\n";
 }
+if (defined $pileupdir)
+{
+    $productionsubdir{"DST_BBC_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_BBC_G4HIT"},$pileupdir);
+    $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("%s_%s",$productionsubdir{"DST_CALO_CLUSTER"},$pileupdir);
+    $productionsubdir{"DST_CALO_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_CALO_G4HIT"},$pileupdir);
+    $productionsubdir{"DST_TRACKS"} = sprintf("%s_%s",$productionsubdir{"DST_TRACKS"},$pileupdir);
+    $productionsubdir{"DST_TRKR_CLUSTER"} = sprintf("%s_%s",$productionsubdir{"DST_TRKR_CLUSTER"},$pileupdir);
+    $productionsubdir{"DST_TRKR_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_TRKR_G4HIT"},$pileupdir);
+    $productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_TRUTH_G4HIT"},$pileupdir);
+    $productionsubdir{"DST_VERTEX"} = sprintf("%s_%s",$productionsubdir{"DST_VERTEX"},$pileupdir);
+}
 
-my %productionsubdir = (
-    "DST_BBC_G4HIT" => "pass2",
-    "DST_CALO_CLUSTER" => "pass3calo",
-    "DST_CALO_G4HIT"=> "pass2",
-    "DST_TRACKS" => "pass4trk",
-    "DST_TRKR_CLUSTER" => "pass3trk",
-    "DST_TRKR_G4HIT" => "pass2",
-    "DST_TRUTH_G4HIT" => "pass2",
-    "DST_VERTEX" => "pass2",
-    "G4Hits" => "pass1"
-    );
 
 my %removecondorfiles = ();
 my %removethese = ();
