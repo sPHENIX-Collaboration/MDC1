@@ -55,7 +55,7 @@ print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.sphnxpro\n";
 print F "request_memory = 16GB\n";
-print F "Priority 	= 25\n";
+print F "Priority 	= 22\n";
 #print F "concurrency_limits = PHENIX_500\n";
 print F "Requirements = CPU_Experiment == \"sdcc\"\n";
 print F "job_lease_duration = 3600\n";
