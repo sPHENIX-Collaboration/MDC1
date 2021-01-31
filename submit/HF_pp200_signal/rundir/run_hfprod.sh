@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.4
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.5
 
 echo running: run_hfprod.sh $*
 
