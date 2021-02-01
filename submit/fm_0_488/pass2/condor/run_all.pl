@@ -68,7 +68,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_sHijing_0_488fm-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_sHijing_0_488fm_50kHz_bkg_0_12fm-%010d-%05d.root",$type,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
