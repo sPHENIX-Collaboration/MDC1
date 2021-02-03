@@ -345,7 +345,7 @@ int Fun4All_G4_HF_pp_signal(
 
   Enable::JETS = true;
   Enable::JETS_EVAL = Enable::JETS && true;
-  Enable::JETS_QA = Enable::JETS and Enable::QA && false;
+  Enable::JETS_QA = Enable::JETS and Enable::QA && true;
 
   // HI Jet Reco for p+Au / Au+Au collisions (default is false for
   // single particle / p+p-only simulations, or for p+Au / Au+Au
