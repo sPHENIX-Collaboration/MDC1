@@ -53,7 +53,6 @@ R__LOAD_LIBRARY(libtrack_reco.so)
 R__LOAD_LIBRARY(libPHTpcTracker.so)
 R__LOAD_LIBRARY(libqa_modules.so)
 
-//#define MDC1_PREPASS
 #define MDC1_RECOPASS
 
 namespace Enable
@@ -89,10 +88,11 @@ namespace G4TRACKING
   // Possible variations - these are normally false
   bool g4eval_use_initial_vertex = false;  // if true, g4eval uses initial vertices in SvtxVertexMap, not final vertices in SvtxVertexMapRefit or SvtxVertexMapActs
   bool use_PHTpcTracker_seeding = false;   // false for using the default PHCASeeding to get TPC track seeds, true to use PHTpcTracker
+  bool use_hybrid_seeding = false;         // false for using the default PHCASeeding, true to use PHHybridSeeding (STAR core, ALICE KF)
   bool use_truth_si_matching = false;      // if true, associates silicon clusters using best truth track match to TPC seed tracks - for diagnostics only
   bool use_truth_track_seeding = false;    // false for normal track seeding, use true to run with truth track seeding instead  ***** WORKS FOR GENFIT ONLY
   bool use_Genfit = false;                 // if false, acts KF is run on proto tracks assembled above, if true, use Genfit track propagation and fitting
-  bool use_init_vertexing = false;         // false for using smeared truth vertex, set to true to get initial vertex from MVTX hits using PHInitZVertexing
+  bool use_acts_init_vertexing = true;    // if true runs acts silicon seeding+initial vertexing
   bool use_primary_vertex = false;         // refit Genfit tracks (only) with primary vertex included - adds second node to node tree, adds second evaluator, outputs separate ntuples
   bool use_acts_evaluator = false;         // Turn to true for an acts evaluator which outputs acts specific information in a tuple
   int init_vertexing_min_zvtx_tracks = 2;  // PHInitZvertexing parameter for reducing spurious vertices, use 2 for Pythia8 events, 5 for large multiplicity events
@@ -171,7 +171,7 @@ void Tracking_Reco()
   // Tracking
   //------------
 
-#ifdef MDC1_PREPASS
+#ifdef MDC1_RECOPASS
 
   // Initial vertex finding (independent of tracking)
   //=================================
@@ -194,9 +194,6 @@ void Tracking_Reco()
     init_zvtx->Verbosity(verbosity);
     se->registerSubsystem(init_zvtx);
   }
-
-#endif  // MDC1_PREPASS
-#ifdef MDC1_RECOPASS
 
   // Truth track seeding and propagation in one module
   // ====================================
@@ -311,16 +308,10 @@ void Tracking_Reco()
       // The normal silicon association methods
       // start with a complete TPC track seed from one of the CA seeders
 
-#endif  // MDC1_RECOPASS
-#ifdef MDC1_PREPASS
-
       // use truth information to assemble silicon clusters into track stubs for now
       PHSiliconTruthTrackSeeding* silicon_seeding = new PHSiliconTruthTrackSeeding();
       silicon_seeding->Verbosity(0);
       se->registerSubsystem(silicon_seeding);
-
-#endif  // MDC1_PREPASS
-#ifdef MDC1_RECOPASS
 
       // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
       PHSiliconTpcTrackMatching* silicon_match = new PHSiliconTpcTrackMatching();
@@ -425,7 +416,7 @@ void Tracking_Reco()
     vtxer->Verbosity(verbosity);
     se->registerSubsystem(vtxer);
 
-#endif    
+#endif
   }
   
   // Final vertex finding and fitting with RAVE
@@ -509,7 +500,7 @@ void Tracking_Eval(const std::string& outputfile)
     evalp->Verbosity(verbosity);
     se->registerSubsystem(evalp);
   }
-#endif
+#endif  // MDC1_RECOPASS
   return;
 }
 
