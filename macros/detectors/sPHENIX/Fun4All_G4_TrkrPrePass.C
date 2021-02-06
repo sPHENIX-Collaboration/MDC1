@@ -32,8 +32,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_TrkrPrePass(
     const int nEvents = 1,
-    const string &inputFile0 = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-    const string &inputFile1 = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
     const string &outputFile = "G4sPHENIX_TrkrCluster.root",
     const string &outdir = ".")
 {
@@ -107,23 +107,19 @@ int Fun4All_G4_TrkrPrePass(
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
-  Enable::MVTX_CLUSTER = Enable::MVTX_CELL && true;
 
   Enable::INTT = true;
   Enable::INTT_CELL = Enable::INTT && true;
-  Enable::INTT_CLUSTER = Enable::INTT_CELL && true;
 
   Enable::TPC = true;
   Enable::TPC_ABSORBER = true;
   Enable::TPC_CELL = Enable::TPC && true;
-  Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
 
   Enable::MICROMEGAS = true;
   Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS_CELL && true;
 
-  Enable::TRACKING_TRACK = true;
-//  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
+  //Enable::TRACKING_TRACK = true;
+  //  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
 
   //---------------
   // Magnet Settings
