@@ -267,15 +267,10 @@ int Fun4All_G4_TrkrPrePass(
   {
     string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-out->AddNode("Sync");
-out->AddNode("EventHeader");
-out->AddNode("TRKR_HITSET");
-out->AddNode("TRKR_HITTRUTHASSOC");
-out->AddNode("TRKR_CLUSTER");
-out->AddNode("TRKR_CLUSTERHITASSOC");
-out->AddNode("SvtxVertexMap");
-out->AddNode("SvtxSiliconTrackMap");
-out->AddNode("AssocInfoContainer");
+    out->AddNode("Sync");
+    out->AddNode("EventHeader");
+    out->AddNode("TRKR_HITSET");
+    out->AddNode("TRKR_HITTRUTHASSOC");
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
   }
