@@ -2,14 +2,14 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.4
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.5
 
 echo running: run_pass3trk.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488_50kHz_0_20fm/pass3trk/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass3trk_50kHz_0_20fm/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
