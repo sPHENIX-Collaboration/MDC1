@@ -32,7 +32,14 @@ my %daughters = (
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRACKS" ],
     "DST_TRACKS" => [ "" ],
-    "DST_CALO_CLUSTER" => [ "" ]
+    "DST_CALO_CLUSTER" => [ "" ],
+    "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
+    "JET_EVAL_DST_HF_CHARM" => [ "DST_HF_CHARM", "QA_DST_HF_CHARM"],
+    "QA_DST_HF_CHARM" => [ "DST_HF_CHARM", "JET_EVAL_DST_HF_CHARM"],
+    "DST_HF_BOTTOM" => [ "JET_EVAL_DST_HF_BOTTOM", "QA_DST_HF_BOTTOM"],
+    "JET_EVAL_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "QA_DST_HF_BOTTOM"],
+    "QA_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "JET_EVAL_DST_HF_BOTTOM"]
+
     );
 
 if ($#ARGV < 0)
@@ -41,13 +48,15 @@ if ($#ARGV < 0)
     print "parameters:\n";
     print "-kill : remove files for real\n";
     print "-type : production type\n";
-    print "    1 : hijing 0-12fm pileup 0-12fm\n";
-    print "    2 : hijing 0-488fm pileup 0-12fm\n";
-    print "    3 : pythia8 mb\n";
-    print "    4 : hijing 0-20fm\n";
-    print "    5 : hijing 0-12fm pileup 0-20fm\n";
-    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
-    print "dsttypes:\n";
+    print "    1 : hijing (0-12fm) pileup 0-12fm\n";
+    print "    2 : hijing (0-4.88fm) pileup 0-12fm\n";
+    print "    3 : pythia8 pp MB\n";
+    print "    4 : hijing (0-20fm) pileup 0-20fm\n";
+    print "    5 : hijing (0-12fm) pileup 0-20fm\n";
+    print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
+    print "    7 : HF pythia8 Charm\n";
+    print "    8 : HF pythia8 Bottom\n";
+    print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
 	print "$tp\n";
@@ -66,21 +75,24 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 6)
+if ($system < 1 || $system > 8)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
-    print "    1 : hijing 0-12fm pileup 0-12fm\n";
-    print "    2 : hijing 0-488fm pileup 0-12fm\n";
-    print "    3 : pythia8 mb\n";
-    print "    4 : hijing 0-20fm\n";
-    print "    5 : hijing 0-12fm pileup 0-20fm\n";
-    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
+    print "    1 : hijing (0-12fm) pileup 0-12fm\n";
+    print "    2 : hijing (0-4.88fm) pileup 0-12fm\n";
+    print "    3 : pythia8 pp MB\n";
+    print "    4 : hijing (0-20fm) pileup 0-20fm\n";
+    print "    5 : hijing (0-12fm) pileup 0-20fm\n";
+    print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
+    print "    7 : HF pythia8 Charm\n";
+    print "    8 : HF pythia8 Bottom\n";
     exit(0);
 }
 
 my $systemstring;
 my $pileupdir;
+my $condorfileadd;
 my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
     "DST_CALO_CLUSTER" => "pass3calo",
@@ -124,6 +136,18 @@ elsif ($system == 6)
     $topdir = sprintf("%s/fm_0_488",$topdir);
     $pileupdir = "50kHz_0_20fm";
 }
+elsif ($system == 7)
+{
+    $systemstring = "DST_HF_CHARM_pythia8-";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Charm");
+}
+elsif ($system == 8)
+{
+    $systemstring = "DST_HF_BOTTOM_pythia8-";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Bottom");
+}
 else
 {
     die "bad type $system\n";
@@ -147,10 +171,23 @@ $removethese{$dsttype} = 1;
 &looparray($dsttype);
 foreach my $rem (keys %removethese)
 {
-    my $condor_subdir = sprintf("%s/%s/condor/log",$topdir,$productionsubdir{$rem});
-    $removecondorfiles{sprintf("%s/condor-%010d-%05d.job",$condor_subdir,1,$segment)} = 1;
-    $removecondorfiles{sprintf("%s/condor-%010d-%05d.out",$condor_subdir,1,$segment)} = 1;
-    $removecondorfiles{sprintf("%s/condor-%010d-%05d.err",$condor_subdir,1,$segment)} = 1;
+    my $condor_subdir = sprintf("%s",$topdir);
+    if (exists $productionsubdir{$rem})
+    {
+	$condor_subdir = sprintf("%s/%s/condor/log",$condor_subdir,$productionsubdir{$rem});
+    }
+    else
+    {
+	$condor_subdir = sprintf("%s/condor/log",$condor_subdir);
+    }
+    my $condornameprefix = sprintf("condor");
+    if (defined $condorfileadd)
+    {
+	$condornameprefix = sprintf("%s-%s",$condornameprefix,$condorfileadd);
+    }
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.job",$condor_subdir,$condornameprefix,1,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.out",$condor_subdir,$condornameprefix,1,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,1,$segment)} = 1;
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$systemstring,1,$segment);
     $getfilename->execute($rem,'%'.$systemstring.'%',$segment);
     if ($getfilename->rows == 1)
@@ -196,6 +233,10 @@ foreach my $condorfile (keys %removecondorfiles)
 	    print "would remove $condorfile\n";
 	}
     }
+    else
+{
+    print "cannot locate $condorfile\n";
+}
 }
 
 
