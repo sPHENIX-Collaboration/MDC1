@@ -11,16 +11,18 @@ my $system = 0;
 
 GetOptions("type:i"=>\$system);
 
-if ($system < 1 || $system > 6)
+if ($system < 1 || $system > 8)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
-    print "    1 : hijing 0-12fm\n";
-    print "    2 : hijing 0-4.88fm\n";
-    print "    3 : pythia8 mb\n";
-    print "    4 : hijing 0-20fm\n";
-    print "    5 : hijing 0-12fm pileup 0-20fm\n";
-    print "    6 : hijing 0-4.88fm pileup 0-20fm\n";
+    print "    1 : hijing (0-12fm) pileup 0-12fm\n";
+    print "    2 : hijing (0-4.88fm) pileup 0-12fm\n";
+    print "    3 : pythia8 pp MB\n";
+    print "    4 : hijing (0-20fm) pileup 0-20fm\n";
+    print "    5 : hijing (0-12fm) pileup 0-20fm\n";
+    print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
+    print "    7 : HF pythia8 Charm\n";
+    print "    8 : HF pythia8 Bottom\n";
     exit(0);
 }
 
@@ -28,11 +30,11 @@ my $systemstring;
 my $gpfsdir = "sHijing_HepMC";
 if ($system == 1)
 {
-    $systemstring = "sHijing_0_12fm";
+    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_12fm";
 }
 elsif ($system == 2)
 {
-    $systemstring = "sHijing_0_488fm";
+    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_12fm";
 }
 elsif ($system == 3)
 {
@@ -50,6 +52,16 @@ elsif ($system == 5)
 elsif ($system == 6)
 {
     $systemstring = "sHijing_0_488fm_50kHz_bkg_0_20fm";
+}
+elsif ($system == 7)
+{
+    $systemstring = "DST_HF_CHARM_pythia8-";
+    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 8)
+{
+    $systemstring = "DST_HF_BOTTOM_pythia8-";
+    $gpfsdir = "HF_pp200_signal";
 }
 else
 {
