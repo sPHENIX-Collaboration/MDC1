@@ -26,7 +26,7 @@ if ($quarkfilter  ne "Charm" && $quarkfilter  ne "Bottom")
     exit(1);
 }
 my $runnumber = 1;
-my $events = 2000;
+my $events = 1000;
 open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
