@@ -265,7 +265,7 @@ int Fun4All_G4_TrkrPrePass(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
+    string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
