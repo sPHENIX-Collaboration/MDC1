@@ -234,9 +234,9 @@ foreach my $condorfile (keys %removecondorfiles)
 	}
     }
     else
-{
-    print "cannot locate $condorfile\n";
-}
+    {
+#    print "cannot locate $condorfile\n";
+    }
 }
 
 

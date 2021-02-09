@@ -9,7 +9,7 @@ use Getopt::Long;
 my $test;
 GetOptions("test"=>\$test);
 
-my $topdcachedir = "/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/pythia8/HeavyFlavorTG";
+my $topdcachedir = "/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/HF_pp200_signal";
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -79,7 +79,7 @@ while (my $file = <F>)
 	    $runnumber = int($2);
 	    $segment = int($3);
 	}
-	my @sp1 = split(/\_production/,$lfn);
+	my @sp1 = split(/\_pythia8/,$lfn);
 	if (! defined $test)
 	{
 	    $insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]);
