@@ -11,7 +11,7 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 
 sub getmd5;
 sub getentries;
-#only created if initial copy fails
+#only created if initial copy fails (only for sphnxpro account)
 my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/backup");
 
 my $outdir = ".";
@@ -26,6 +26,9 @@ if (! -f $file)
     print "$file not found\n";
     die;
 }
+# get the username so othere users cannot mess with the production DBs
+my $username = getpwuid( $< );
+
 my $lfn = basename($file);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
@@ -39,13 +42,6 @@ my $delcat = $dbh->prepare("delete from datasets where filename = ?");
 
 my $size = stat($file)->size;
 
-if (! -d $outdir)
-{
-    if (! defined $test)
-{
-    mkpath($outdir);
-}
-}
 my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$file);
 if (-f $outfile)
@@ -58,6 +54,11 @@ if (-f $outfile)
 my $outhost;
 if ($outdir =~ /pnfs/)
 { 
+    if ($username ne "sphnxpro")
+    {
+	print "no copying to dCache for $username, only sphnxpro can do that\n";
+	exit 0;
+    }
     $copycmd = sprintf("dccp -d7 -C 3600 %s %s",$file,$outfile);
     $outhost = 'dcache';
 }
@@ -66,6 +67,17 @@ else
     $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
     $outhost = 'gpfs';
 }
+# create output dir if it does not exist and if it is not a test
+# user check for dCache is handled before so we do
+# not have to protect here against users trying to create a dir in dCache
+if (! -d $outdir)
+{
+    if (! defined $test)
+    {
+	mkpath($outdir);
+    }
+}
+
 if (defined $test)
 {
     print "cmd: $copycmd\n";
@@ -75,6 +87,16 @@ else
     print "cmd: $copycmd\n";
     system($copycmd);
 }
+
+# down here only things for the production account
+# 1) on failed copy - copy to backup dir
+# 2) get md5sum and number of entries and update file catalog
+if ($username ne "sphnxpro")
+{
+    print "no DB modifictions for $username\n";
+    exit 0;
+}
+
 if (! -f $outfile)
 {
     if (! -d $backupdir)
