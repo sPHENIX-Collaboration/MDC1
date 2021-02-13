@@ -17,6 +17,13 @@ if ($#ARGV < 1)
     exit(1);
 }
 
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
+    exit(1);
+}
 
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
@@ -80,6 +87,5 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     else
     {
 	print "output file already exists\n";
-	$isub--;
     }
 }
