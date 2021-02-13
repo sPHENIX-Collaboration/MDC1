@@ -8,12 +8,16 @@ my %condorlogs = ();
 my @fmrange = ();
 push(@fmrange,"fm_0_488");
 push(@fmrange,"fm_0_12");
+push(@fmrange,"fm_0_20");
 
 my @passes = ();
 push(@passes,"pass1");
 push(@passes,"pass2");
+push(@passes,"pass2_50kHz_0_20fm");
 push(@passes,"pass3trk");
+push(@passes,"pass3trk_50kHz_0_20fm");
 push(@passes,"pass3calo");
+push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
 
 foreach my $fm (sort @fmrange)
