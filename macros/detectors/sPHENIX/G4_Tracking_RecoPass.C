@@ -84,7 +84,6 @@ namespace G4TRACKING
   //   PHActsVertexFinder                        // Final event vertex fit from Acts
 
   bool use_rave_vertexing = true;          // Use Rave to find and fit for vertex after track fitting - for QA use
-
   // Possible variations - these are normally false
   bool g4eval_use_initial_vertex = false;  // if true, g4eval uses initial vertices in SvtxVertexMap, not final vertices in SvtxVertexMapRefit or SvtxVertexMapActs
   bool use_PHTpcTracker_seeding = false;   // false for using the default PHCASeeding to get TPC track seeds, true to use PHTpcTracker
@@ -92,7 +91,7 @@ namespace G4TRACKING
   bool use_truth_si_matching = false;      // if true, associates silicon clusters using best truth track match to TPC seed tracks - for diagnostics only
   bool use_truth_track_seeding = false;    // false for normal track seeding, use true to run with truth track seeding instead  ***** WORKS FOR GENFIT ONLY
   bool use_Genfit = false;                 // if false, acts KF is run on proto tracks assembled above, if true, use Genfit track propagation and fitting
-  bool use_acts_init_vertexing = true;    // if true runs acts silicon seeding+initial vertexing
+  bool use_acts_init_vertexing = true;    // if true runs acts silicon seeding+initial vertexing 
   bool use_primary_vertex = false;         // refit Genfit tracks (only) with primary vertex included - adds second node to node tree, adds second evaluator, outputs separate ntuples
   bool use_acts_evaluator = false;         // Turn to true for an acts evaluator which outputs acts specific information in a tuple
   int init_vertexing_min_zvtx_tracks = 2;  // PHInitZvertexing parameter for reducing spurious vertices, use 2 for Pythia8 events, 5 for large multiplicity events
@@ -175,7 +174,7 @@ void Tracking_Reco()
 
   // Initial vertex finding (independent of tracking)
   //=================================
-  if (!G4TRACKING::use_init_vertexing)
+  if (!G4TRACKING::use_acts_init_vertexing)
   {
     // We cheat to get the initial vertex for the full track reconstruction case
     PHInitVertexing* init_vtx = new PHTruthVertexing("PHTruthVertexing");
@@ -416,7 +415,7 @@ void Tracking_Reco()
     vtxer->Verbosity(verbosity);
     se->registerSubsystem(vtxer);
 
-#endif
+#endif 
   }
   
   // Final vertex finding and fitting with RAVE
@@ -483,7 +482,7 @@ void Tracking_Eval(const std::string& outputfile)
       actsEval->setEvalCKF(false);
       se->registerSubsystem(actsEval);
     }
-#endif
+#endif 
   }
 
   if (G4TRACKING::use_primary_vertex)

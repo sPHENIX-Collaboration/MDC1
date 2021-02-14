@@ -32,7 +32,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Trkr(
     const int nEvents = 1,
-    const string &inputFile = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const string &inputFile0 = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
     const string &outputFile = "G4sPHENIX_Trkr.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -67,7 +68,8 @@ int Fun4All_G4_Trkr(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
-  INPUTREADHITS::filename = inputFile;
+  INPUTREADHITS::filename[0] = inputFile0;
+  INPUTREADHITS::filename[1] = inputFile1;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -109,6 +111,18 @@ int Fun4All_G4_Trkr(
 
   // Enable::PIPE = true;
   // Enable::PIPE_ABSORBER = true;
+
+  Enable::MVTX = true;
+  Enable::MVTX_CLUSTER =  Enable::MVTX && true;
+
+  Enable::INTT = true;
+  Enable::INTT_CLUSTER =  Enable::INTT && true;
+
+  Enable::TPC = true;
+  Enable::TPC_CLUSTER =  Enable::TPC && true;
+
+  Enable::MICROMEGAS = true;
+  Enable::MICROMEGAS_CLUSTER =  Enable::MICROMEGAS  && true;
 
   Enable::TRACKING_TRACK = true;
 //  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
@@ -256,7 +270,7 @@ int Fun4All_G4_Trkr(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputDir + "/" + DstOut::OutputFile;
+    string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
