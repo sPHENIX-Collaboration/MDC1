@@ -84,7 +84,6 @@ namespace G4TRACKING
   //   PHActsVertexFinder                        // Final event vertex fit from Acts
 
   bool use_rave_vertexing = true;          // Use Rave to find and fit for vertex after track fitting - for QA use
-  bool use_init_vertexing = false;
   // Possible variations - these are normally false
   bool g4eval_use_initial_vertex = false;  // if true, g4eval uses initial vertices in SvtxVertexMap, not final vertices in SvtxVertexMapRefit or SvtxVertexMapActs
   bool use_PHTpcTracker_seeding = false;   // false for using the default PHCASeeding to get TPC track seeds, true to use PHTpcTracker
@@ -175,7 +174,7 @@ void Tracking_Reco()
 
   // Initial vertex finding (independent of tracking)
   //=================================
-  if (!G4TRACKING::use_init_vertexing)
+  if (!G4TRACKING::use_acts_init_vertexing)
   {
     // We cheat to get the initial vertex for the full track reconstruction case
     PHInitVertexing* init_vtx = new PHTruthVertexing("PHTruthVertexing");
