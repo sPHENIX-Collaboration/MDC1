@@ -27,13 +27,13 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
+// we have a problem in a micromega geometry object, the cluster file needs
+// to be read last - the pileup files contain the wrong version
 
 int Fun4All_G4_Trkr(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00000.root",
+    const string &inputFile0 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00001.root",
+    const string &inputFile1 = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00001.root",
     const string &outputFile = "G4sPHENIX_Trkr.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
