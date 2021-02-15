@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 3)
 {
-    print "usage: run_condor.pl <events> <trk cluster> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events>  <truth infile> <trk cluster> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -20,11 +20,12 @@ chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4trk.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile = $ARGV[1];
-my $dstoutfile = $ARGV[2];
-my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
+my $infile0 = $ARGV[1];
+my $infile1 = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
