@@ -38,6 +38,6 @@ echo arg2 \(truth input file\): $2
 echo arg3 \(trkr cluster input file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
-echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"$4\",\"\",0,\"$5\"\)
+root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"$4\",\"\",0,\"$5\"\)
 echo "script done"
