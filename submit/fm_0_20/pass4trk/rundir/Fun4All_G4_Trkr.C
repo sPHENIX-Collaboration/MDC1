@@ -40,7 +40,7 @@ int Fun4All_G4_Trkr(
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -315,6 +315,8 @@ int Fun4All_G4_Trkr(
   //-----
 
   se->End();
+  se->PrintTimer();
+  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
