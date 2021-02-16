@@ -20,7 +20,13 @@ if ($#ARGV < 0)
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
-
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
+    exit(1);
+}
 my $maxsubmit = $ARGV[0];
 if (! -f "outdir.txt")
 {
