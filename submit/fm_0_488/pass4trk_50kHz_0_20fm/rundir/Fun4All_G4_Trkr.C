@@ -272,6 +272,9 @@ int Fun4All_G4_Trkr(
   {
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->StripNode("PHHepMCGenEventMap");
+    out->StripNode("G4HIT_BH_1");
+    out->StripNode("G4TruthInfo");
     out->StripNode("TRKR_HITSET");
     out->StripNode("TRKR_HITTRUTHASSOC");
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
