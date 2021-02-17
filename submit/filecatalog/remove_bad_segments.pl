@@ -188,6 +188,7 @@ foreach my $rem (keys %removethese)
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.job",$condor_subdir,$condornameprefix,1,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.out",$condor_subdir,$condornameprefix,1,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,1,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,1,$segment)} = 1;
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$systemstring,1,$segment);
     $getfilename->execute($rem,'%'.$systemstring.'%',$segment);
     if ($getfilename->rows == 1)
