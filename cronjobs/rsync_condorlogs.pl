@@ -3,12 +3,15 @@
 use strict;
 use warnings;
 
+sub dir_is_empty;
+
 my $submitdir = "/sphenix/u/sphnxpro/MDC1/submit";
 my %condorlogs = ();
 my @fmrange = ();
 push(@fmrange,"fm_0_488");
 push(@fmrange,"fm_0_12");
 push(@fmrange,"fm_0_20");
+push(@fmrange,"HF_pp200_signal");
 
 my @passes = ();
 push(@passes,"pass1");
@@ -22,19 +25,46 @@ push(@passes,"pass4trk");
 
 foreach my $fm (sort @fmrange)
 {
+if ($fm eq "HF_pp200_signal")
+ {
+$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/condor/log",$submitdir,$fm);
+}
+else
+ {
     foreach my $pass (sort @passes)
     {
 	$condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
 
     }
 }
+}
 
 foreach my $condorlogdir (sort keys %condorlogs)
 {
     if (-d $condorlogdir && -d $condorlogs{$condorlogdir})
     {
-	my $rsynccmd = sprintf("rsync -av %s %s",$condorlogdir, $condorlogs{$condorlogdir});
-	print "cmd: $rsynccmd\n";
-	system($rsynccmd);
+	if (&dir_is_empty($condorlogdir) == 1)
+	{
+	    my $rsynccmd = sprintf("rsync -av %s/* %s",$condorlogdir, $condorlogs{$condorlogdir});
+	    print "cmd: $rsynccmd\n";
+	    system($rsynccmd);
+	}
+	else
+	{
+	    print "$condorlogdir is empty\n";
+	}
     }
+}
+
+sub dir_is_empty
+{
+    my $dirname = $_[0];
+    my $iret = 0;
+    opendir my $dir, $dirname or die $!;
+    if( grep ! /^\.\.?$/, readdir $dir )
+    {
+	$iret = 1;
+    }
+    closedir($dir);
+    return $iret;
 }
