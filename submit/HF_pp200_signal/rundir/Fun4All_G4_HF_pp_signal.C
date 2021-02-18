@@ -274,7 +274,7 @@ int Fun4All_G4_HF_pp_signal(
   Enable::INTT_QA = Enable::INTT_CLUSTER and Enable::QA && true;
 
   Enable::TPC = true;
-  Enable::TPC_ABSORBER = true;
+  Enable::TPC_ABSORBER = false;
   Enable::TPC_CELL = Enable::TPC && true;
   Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
   Enable::TPC_QA = Enable::TPC_CLUSTER and Enable::QA && true;
@@ -292,31 +292,31 @@ int Fun4All_G4_HF_pp_signal(
   //  Enable::CEMCALBEDO = true;
 
   Enable::CEMC = true;
-  Enable::CEMC_ABSORBER = true;
+  Enable::CEMC_ABSORBER = false;
   Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
   Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && false;
-  Enable::CEMC_QA = Enable::CEMC_CLUSTER and Enable::QA && true;
+  Enable::CEMC_QA = Enable::CEMC_CLUSTER and Enable::QA && false;
 
   Enable::HCALIN = true;
-  Enable::HCALIN_ABSORBER = true;
+  Enable::HCALIN_ABSORBER = false;
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
   Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
-  Enable::HCALIN_QA = Enable::HCALIN_CLUSTER and Enable::QA && true;
+  Enable::HCALIN_QA = Enable::HCALIN_CLUSTER and Enable::QA && false;
 
   Enable::MAGNET = true;
-  Enable::MAGNET_ABSORBER = true;
+  Enable::MAGNET_ABSORBER = false;
 
   Enable::HCALOUT = true;
-  Enable::HCALOUT_ABSORBER = true;
+  Enable::HCALOUT_ABSORBER = false;
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
   Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
-  Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER and Enable::QA && true;
+  Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER and Enable::QA && false;
 
   // forward EMC
   //Enable::FEMC = true;
