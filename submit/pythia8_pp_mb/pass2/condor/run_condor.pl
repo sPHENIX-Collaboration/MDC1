@@ -53,7 +53,7 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-print F "accounting_group = group_sphenix.sphnxpro\n";
+print F "accounting_group = group_sphenix.prod\n";
 print F "request_memory = 2GB\n";
 print F "Priority 	= 21\n";
 print F "concurrency_limits = PHENIX_500\n";
