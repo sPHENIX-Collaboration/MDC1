@@ -12,6 +12,8 @@ push(@fmrange,"fm_0_488");
 push(@fmrange,"fm_0_12");
 push(@fmrange,"fm_0_20");
 push(@fmrange,"HF_pp200_signal");
+push(@fmrange,"pythia8_pp_mb");
+
 
 my @passes = ();
 push(@passes,"pass1");
@@ -22,25 +24,27 @@ push(@passes,"pass3trk_50kHz_0_20fm");
 push(@passes,"pass3calo");
 push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
+push(@passes,"pass4trk_50kHz_0_20fm");
 
 foreach my $fm (sort @fmrange)
 {
-if ($fm eq "HF_pp200_signal")
- {
-$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/condor/log",$submitdir,$fm);
-}
-else
- {
-    foreach my $pass (sort @passes)
+    if ($fm eq "HF_pp200_signal")
     {
-	$condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
-
+	$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/condor/log",$submitdir,$fm);
     }
-}
+    else
+    {
+	foreach my $pass (sort @passes)
+	{
+	    $condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
+
+	}
+    }
 }
 
 foreach my $condorlogdir (sort keys %condorlogs)
 {
+    print "checking $condorlogdir and $condorlogs{$condorlogdir}\n";
     if (-d $condorlogdir && -d $condorlogs{$condorlogdir})
     {
 	if (&dir_is_empty($condorlogdir) == 1)
