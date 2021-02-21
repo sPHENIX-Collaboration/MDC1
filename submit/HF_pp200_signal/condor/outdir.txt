@@ -1,1 +1,1 @@
-/sphenix/sim/sim01/sphnxpro/MDC1/HF_pp200_signal/data
+/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/HF_pp200_signal

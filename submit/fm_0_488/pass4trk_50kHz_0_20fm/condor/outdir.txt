@@ -1,1 +1,1 @@
-/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/Tracks/data
+/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/sHijing_HepMC/Tracks
