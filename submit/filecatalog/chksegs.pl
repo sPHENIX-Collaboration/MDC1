@@ -34,6 +34,7 @@ if ($system == 1)
 }
 elsif ($system == 2)
 {
+#    $systemstring = "sHijing_0_488fm";
     $systemstring = "sHijing_0_488fm_50kHz_bkg_0_12fm";
 }
 elsif ($system == 3)
