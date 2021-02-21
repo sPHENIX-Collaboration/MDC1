@@ -8,3 +8,8 @@ MAILTO="pinkenburg@bnl.gov"
 # rsync mdc1 condor logs
 #-----------------
 17 7 * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC1/cronjobs/rsync_condorlogs.pl >&  /sphenix/u/sphnxpro/MDC1/cronjobs/rsync_condorlogs.log
+#
+#-----------------
+# autopilot condor submission
+#-----------------
+17 21 * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC1/cronjobs/autopilot.pl >&  /sphenix/u/sphnxpro/MDC1/cronjobs/autopilot.log
