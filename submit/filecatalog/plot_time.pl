@@ -29,9 +29,6 @@ if (-f $runremlist)
 
 if (! -f $runremlist)
 {
-#    unlink $runremlist;
-
-
     open(F,"$cmd");
     open(F2,">$runremlist");
     while (my $file = <F>)
