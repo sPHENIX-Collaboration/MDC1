@@ -25,6 +25,7 @@ push(@passes,"pass3calo");
 push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
+push(@passes,"pass5trk");
 
 foreach my $fm (sort @fmrange)
 {
