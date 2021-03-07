@@ -27,15 +27,20 @@ if ($system < 1 || $system > 8)
 }
 
 my $systemstring;
+my $systemstring_g4hits;
+my $g4hits_exist = 0;
 my $gpfsdir = "sHijing_HepMC";
 if ($system == 1)
 {
-    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_12fm";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_0_12fm";
+    $systemstring = sprintf("%s_50kHz_bkg_0_12fm",$systemstring_g4hits);
 }
 elsif ($system == 2)
 {
-#    $systemstring = "sHijing_0_488fm";
-    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_12fm";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_0_488fm";
+    $systemstring = sprintf("%s_50kHz_bkg_0_12fm",$systemstring_g4hits);
 }
 elsif ($system == 3)
 {
@@ -48,11 +53,15 @@ elsif ($system == 4)
 }
 elsif ($system == 5)
 {
-    $systemstring = "sHijing_0_12fm_50kHz_bkg_0_20fm";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_0_12fm";
+    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
 }
 elsif ($system == 6)
 {
-    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_20fm";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_0_488fm";
+    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
 }
 elsif ($system == 7)
 {
@@ -87,11 +96,19 @@ if ($#ARGV < 0)
     {
 	print "$res[0]\n";
     }
+    if ($g4hits_exist == 1)
+    {
+	print "G4Hits\n";
+    }
     exit(1);
 }
 
 
 my $type = $ARGV[0];
+if ($g4hits_exist == 1 && $type eq "G4Hits")
+{
+    $systemstring = $systemstring_g4hits;
+}
 my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;
 my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%'")|| die $DBI::error;
 
@@ -108,21 +125,21 @@ my $nsegs_gpfs = keys %seglist;
 print "number of segments processed:  $nsegs_gpfs\n";
 foreach my $dcdir (keys  %topdcachedir)
 {
- my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/$type/$type%'");
- $getsegsdc->execute();
- my $rows = $getsegsdc->rows;
- print "entries for $dcdir: $rows\n";
- $getsegsdc->finish();
+    my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/$type/$type%'");
+    $getsegsdc->execute();
+    my $rows = $getsegsdc->rows;
+    print "entries for $dcdir: $rows\n";
+    $getsegsdc->finish();
 }
 my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/$gpfsdir/%'");
 #my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC1/sHijing_HepMC/%'");
 for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 {
     if (!exists $seglist{$iseg})
-   {
+    {
 	print "segment $iseg missing\n";
 	next;
-   }
+    }
     else
     {
 	$chklfn->execute($seglist{$iseg});
