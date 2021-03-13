@@ -9,7 +9,9 @@ my @submitdir = ("fm_0_488/pass2_50kHz_0_20fm/condor",
 		 "fm_0_488/pass3calo_50kHz_0_20fm/condor",
 		 "fm_0_488/pass3trk_50kHz_0_20fm/condor",
 		 "fm_0_488/pass4trk_50kHz_0_20fm/condor",
+		 "fm_0_20/pass2/condor",
 		 "fm_0_20/pass3trk/condor",
+		 "fm_0_20/pass3calo/condor",
 		 "fm_0_20/pass4trk/condor"
 );
 foreach my $subdir (@submitdir)
