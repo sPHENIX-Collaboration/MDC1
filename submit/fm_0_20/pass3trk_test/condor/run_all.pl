@@ -75,7 +75,7 @@ foreach my $segment (sort keys %trkhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRKR_RECOCLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
