@@ -9,7 +9,7 @@ echo running: run_pass3trk.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_20/pass3trk/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_20/pass3trk_test/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
