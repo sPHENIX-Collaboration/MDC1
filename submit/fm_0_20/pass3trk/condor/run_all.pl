@@ -20,6 +20,7 @@ if ($#ARGV < 0)
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)

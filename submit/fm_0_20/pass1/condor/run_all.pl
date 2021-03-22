@@ -18,6 +18,14 @@ if ($#ARGV < 0)
     exit(1);
 }
 
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
+    exit(1);
+}
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
