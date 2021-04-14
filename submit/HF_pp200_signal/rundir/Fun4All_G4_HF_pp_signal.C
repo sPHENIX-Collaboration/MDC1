@@ -84,7 +84,7 @@ int Fun4All_G4_HF_pp_signal(
   // In case embedding into a production output, please double check your G4Setup_sPHENIX.C and G4_*.C consistent with those in the production macro folder
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
   //Input::EMBED = true;
-  INPUTEMBED::filename = embed_input_file;
+  //INPUTEMBED::filename = embed_input_file; //Why is this complaining in local production? no .c_str()?
 
   // Input::SIMPLE = true;
   // Input::SIMPLE_NUMBER = 2; // if you need 2 of them
@@ -143,7 +143,17 @@ int Fun4All_G4_HF_pp_signal(
     }
     else if (HF_Q_filter == "minBias")
     {
-      continue;
+      for (int i = 1; i < 7; ++i)
+      { //Trigger on any quark
+        p8_hf_signal_trigger -> AddParticles(i);
+        p8_hf_signal_trigger -> AddParticles(-1*i);
+      } 
+
+      for (int i = 21; i < 25; ++i)
+      {//Trigger on gluons, photons and vector bosons (valence/sea annihilation?)
+        p8_hf_signal_trigger -> AddParticles(i);
+      }
+        p8_hf_signal_trigger -> AddParticles(-24); //Trigger on W-
     }
     else
     {
