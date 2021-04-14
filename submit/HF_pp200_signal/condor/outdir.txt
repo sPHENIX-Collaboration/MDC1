@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC1/HF_pp200_signal
+/sphenix/user/cdean/MDC1/pythia8/HeavyFlavorTG/data/minBias
