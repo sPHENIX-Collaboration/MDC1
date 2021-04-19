@@ -62,9 +62,14 @@ foreach my $file (keys %inputfiles)
 #    print "size: $res[2]\n";
 
     my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $res[0]);
-    print "executing $copycmd\n";
+    my $thisdate = `date`;
+    chomp $thisdate;
+    print "executing $copycmd at $thisdate\n";
 
     system($copycmd);
+    $thisdate = `date`;
+    chomp $thisdate;
+    print "$copycmd done at $thisdate\n";
 
     if (-f $file)
     {
@@ -78,7 +83,13 @@ foreach my $file (keys %inputfiles)
 	{
 	    print "size for $file matches $fsize\n";
 	}
+	$thisdate = `date`;
+	chomp $thisdate;
+	print "running md5 of $file at $thisdate\n";
 	my $recalcmd5 = &getmd5($file);
+	$thisdate = `date`;
+	chomp $thisdate;
+	print "md5 of $file done at $thisdate\n";
 	if (defined $res[1])
 	{
 	    if ($res[1] ne $recalcmd5)
