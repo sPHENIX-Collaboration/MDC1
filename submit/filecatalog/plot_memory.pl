@@ -17,13 +17,40 @@ if (! -d $logdir)
     exit(2);
 }
 
-my $cmd = sprintf("cat %s/*.log | grep 'Memory (MB)          :' | awk '{print \$4}' | sort -n > memory",$logdir);
+#my $cmd = sprintf("cat %s/*.log | grep 'Memory (MB)          :' | awk '{print \$4}' | sort -n > memory",$logdir);
 
-print "$cmd\n";
+my $cmd = sprintf("find %s/ -name '*.log' |",$logdir);
 
-system($cmd);
+my $runremlist = "memory.list";
 
-$cmd = sprintf("root.exe plotmem.C\\(\\\"memory\\\"\\)");
+if (-f $runremlist)
+{
+    unlink $runremlist;
+}
+my $cnt = 0;
+open(F2,">$runremlist");
+open(F,"$cmd");
+while (my $file = <F>)
+{
+    print "file: $file";
+    chomp $file;
+    my $fcmd = sprintf("cat %s | grep 'Memory (MB)' | awk '{print \$4}' | ",$file);
+    open(F1,$fcmd);
+    while (my $remline = <F1>)
+    {
+	print F2 "$remline";
+    }
+    close(F1);
+    $cnt++;
+if ($cnt > 1000)
+ {
+    last;
+}
+}
+close(F);
+close(F2);
+
+$cmd = sprintf("root.exe plotmem.C\\(\\\"memory.list\\\"\\)");
 
 print "$cmd\n";
 
