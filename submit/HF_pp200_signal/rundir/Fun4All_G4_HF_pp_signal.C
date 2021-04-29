@@ -141,7 +141,6 @@ int Fun4All_G4_HF_pp_signal(
       p8_hf_signal_trigger -> AddParticles(5);
       p8_hf_signal_trigger -> AddParticles(-5);
     }
-
     else if (HF_Q_filter == "minBias")
     {
     /*
