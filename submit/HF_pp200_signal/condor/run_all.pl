@@ -10,7 +10,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\" or \"Bottom\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"Bottom\ or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -27,9 +27,9 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
-if ($quarkfilter  ne "Charm" && $quarkfilter  ne "Bottom")
+if ($quarkfilter  ne "Charm" && $quarkfilter  ne "Bottom" && $quarkfilter  ne "MinBias")
 {
-    print "second argument has to be either Charm or Bottom\n";
+    print "second argument has to be either Charm, Bottom or MinBias\n";
     exit(1);
 }
 my $runnumber = 1;
