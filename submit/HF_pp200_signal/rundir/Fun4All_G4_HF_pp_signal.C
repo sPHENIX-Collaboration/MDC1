@@ -75,7 +75,7 @@ int Fun4All_G4_HF_pp_signal(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   //  Input::READHITS = true;
-  // INPUTREADHITS::filename = inputFile;
+  // INPUTREADHITS::filename[0] = inputFile;
 
   // Or:
   // Use particle generator
@@ -84,7 +84,7 @@ int Fun4All_G4_HF_pp_signal(
   // In case embedding into a production output, please double check your G4Setup_sPHENIX.C and G4_*.C consistent with those in the production macro folder
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
   //Input::EMBED = true;
-  //INPUTEMBED::filename = embed_input_file; //Why is this complaining in local production? no .c_str()?
+  //INPUTEMBED::filename[0] = embed_input_file;
 
   // Input::SIMPLE = true;
   // Input::SIMPLE_NUMBER = 2; // if you need 2 of them
@@ -141,7 +141,7 @@ int Fun4All_G4_HF_pp_signal(
       p8_hf_signal_trigger -> AddParticles(5);
       p8_hf_signal_trigger -> AddParticles(-5);
     }
-    else if (HF_Q_filter == "minBias")
+    else if (HF_Q_filter == "MinBias")
     {
     /*
       for (int i = 1; i < 7; ++i)
