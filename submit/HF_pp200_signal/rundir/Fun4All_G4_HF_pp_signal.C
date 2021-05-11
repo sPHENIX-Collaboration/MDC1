@@ -38,7 +38,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
-    const string &HF_Q_filter = "Charm", // or "Bottom"
+    const string &HF_Q_filter = "Charm", // or "Bottom" or "MinBias"
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -75,7 +75,7 @@ int Fun4All_G4_HF_pp_signal(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   //  Input::READHITS = true;
-  // INPUTREADHITS::filename = inputFile;
+  // INPUTREADHITS::filename[0] = inputFile;
 
   // Or:
   // Use particle generator
@@ -84,7 +84,7 @@ int Fun4All_G4_HF_pp_signal(
   // In case embedding into a production output, please double check your G4Setup_sPHENIX.C and G4_*.C consistent with those in the production macro folder
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
   //Input::EMBED = true;
-  INPUTEMBED::filename = embed_input_file;
+  //INPUTEMBED::filename[0] = embed_input_file;
 
   // Input::SIMPLE = true;
   // Input::SIMPLE_NUMBER = 2; // if you need 2 of them
@@ -141,6 +141,22 @@ int Fun4All_G4_HF_pp_signal(
       p8_hf_signal_trigger -> AddParticles(5);
       p8_hf_signal_trigger -> AddParticles(-5);
     }
+    else if (HF_Q_filter == "MinBias")
+    {
+    /*
+      for (int i = 1; i < 7; ++i)
+      { //Trigger on any quark
+        p8_hf_signal_trigger -> AddParticles(i);
+        p8_hf_signal_trigger -> AddParticles(-1*i);
+      } 
+
+      for (int i = 21; i < 25; ++i)
+      {//Trigger on gluons, photons and vector bosons (valence/sea annihilation?)
+        p8_hf_signal_trigger -> AddParticles(i);
+      }
+        p8_hf_signal_trigger -> AddParticles(-24); //Trigger on W-
+    */
+    }
     else
     {
       cout <<"Fatal error on HF_Q_filter configuration = "<<HF_Q_filter<<endl;
@@ -151,7 +167,7 @@ int Fun4All_G4_HF_pp_signal(
     p8_hf_signal_trigger->PrintConfig();
 //    p8_hf_signal_trigger->Verbosity(10);
 
-    INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
+    if (HF_Q_filter == "Charm" or HF_Q_filter == "Bottom") INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
     INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
     INPUTGENERATOR::Pythia8->set_vertex_distribution_width(0.1,0.1,10,0);
   }
@@ -318,13 +334,6 @@ int Fun4All_G4_HF_pp_signal(
   Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
   Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER and Enable::QA && false;
 
-  // forward EMC
-  //Enable::FEMC = true;
-  Enable::FEMC_ABSORBER = true;
-  Enable::FEMC_TOWER = Enable::FEMC && true;
-  Enable::FEMC_CLUSTER = Enable::FEMC_TOWER && true;
-  Enable::FEMC_EVAL = Enable::FEMC_CLUSTER and Enable::QA && false;
-
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
@@ -435,9 +444,6 @@ int Fun4All_G4_HF_pp_signal(
   // if enabled, do topoClustering early, upstream of any possible jet reconstruction
   if (Enable::TOPOCLUSTER) TopoClusterReco();
 
-  if (Enable::FEMC_TOWER) FEMC_Towers();
-  if (Enable::FEMC_CLUSTER) FEMC_Clusters();
-
   //--------------
   // SVTX tracking
   //--------------
@@ -506,8 +512,6 @@ int Fun4All_G4_HF_pp_signal(
   if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_" + HF_Q_filter + "_g4hcalin_eval.root");
 
   if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_" + HF_Q_filter + "_g4hcalout_eval.root");
-
-  if (Enable::FEMC_EVAL) FEMC_Eval(outputroot + "_" + HF_Q_filter + "_g4femc_eval.root");
 
   if (Enable::JETS_EVAL) Jet_Eval("JET_EVAL_" + outputroot + ".root");
 
