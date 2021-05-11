@@ -54,7 +54,7 @@ print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.prod\n";
-print F "request_memory = 12GB\n";
+print F "request_memory = 8GB\n";
 print F "Priority 	= 22\n";
 #print F "concurrency_limits = PHENIX_500\n";
 #print F "Requirements = CPU_Experiment == \"sdcc\"\n";
