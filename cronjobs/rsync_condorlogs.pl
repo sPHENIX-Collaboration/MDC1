@@ -13,6 +13,7 @@ push(@fmrange,"fm_0_12");
 push(@fmrange,"fm_0_20");
 push(@fmrange,"HF_pp200_signal");
 push(@fmrange,"pythia8_pp_mb");
+push(@fmrange,"FixDST");
 
 
 my @passes = ();
@@ -27,6 +28,8 @@ push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
 push(@passes,"pass5trk");
+# for FixDST
+push(@passes,"HF_pp200_signal");
 
 foreach my $fm (sort @fmrange)
 {
