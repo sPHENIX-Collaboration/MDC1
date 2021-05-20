@@ -8,9 +8,8 @@ echo running: run_fixdst.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-#    rsync -av /sphenix/u/sphnxpro/MDC1/submit/FixDST/HF_pp200_signal/rundir/* .
-    rsync -av /sphenix/user/pinkenbu/MDC1/submit/FixDST/HF_pp200_signal/rundir/* .
-    getinputfiles.pl $1 $2 $3
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/FixDST/HF_pp200_signal/rundir/* .
+    getinputfiles.pl $1
     if [ $? -ne 0 ]
     then
 	echo error from getinputfiles.pl $1, exiting
@@ -21,10 +20,8 @@ else
 fi
 # arguments 
 # $1: number of events
-# $2: calo g4hits input file
-# $3: vertex input file
-# $4: output file
-# $5: output dir
+# $2: output file
+# $3: output dir
 
 echo 'here comes your environment'
 printenv
