@@ -141,7 +141,7 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
     $runnumber = int($2);
     $segment = int($3);
 }
-my @sp1 = split(/\_sHijing/,$lfn);
+my @sp1 = split(/\_pythia8/,$lfn);
 if (! defined $test)
 {
  $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
