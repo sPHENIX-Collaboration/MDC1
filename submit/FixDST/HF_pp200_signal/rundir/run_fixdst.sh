@@ -30,7 +30,7 @@ echo 'here comes your environment'
 printenv
 echo arg1 \(input DST\) : $1
 echo running root.exe -q -b run_pass1.C\(\"$1\"\)
-root.exe -q -b run_pass1.C\(\"$1\",10\)
+root.exe -q -b run_pass1.C\(\"$1\"\)
 echo "pass1 done"
 
 if [[ ! -f "pass1out.root" ]]
@@ -43,5 +43,5 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.250
 source /opt/sphenix/core/bin/setup_local.sh /opt/sphenix/core/FixDST/pass2/install
 
 echo running root.exe -q -b run_pass2.C\(\"pass1out.root\",\"$2\",\"$3\"\)
-root.exe -q -b run_pass2.C\(\"pass1out.root\",\"$2\",\"$3\",10\)
+root.exe -q -b run_pass2.C\(\"pass1out.root\",\"$2\",\"$3\"\)
 echo "pass2 done"
