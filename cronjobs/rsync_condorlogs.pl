@@ -29,13 +29,32 @@ push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
 push(@passes,"pass5trk");
 # for FixDST
-push(@passes,"HF_pp200_signal");
+my @FixDSTpasses = ();
+push(@FixDSTpasses,"HF_pp200_signal");
+push(@FixDSTpasses,"fm_0_20");
 
 foreach my $fm (sort @fmrange)
 {
     if ($fm eq "HF_pp200_signal")
     {
 	$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/condor/log",$submitdir,$fm);
+    }
+    elsif ($fm eq "FixDST")
+    {
+	foreach my $fixpass (sort @FixDSTpasses)
+	{
+	    if ($fixpass eq "HF_pp200_signal")
+	    {
+		$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$fixpass);
+	    }
+
+	    foreach my $pass (sort @passes)
+	    {
+
+		$condorlogs{sprintf("/tmp/%s/%s/%s",$fm,$fixpass,$pass)} = sprintf("%s/%s/%s/%s/condor/log",$submitdir,$fm,$fixpass,$pass);
+
+	    }
+	}
     }
     else
     {
