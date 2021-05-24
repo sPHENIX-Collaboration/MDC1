@@ -38,7 +38,9 @@ my %daughters = (
     "QA_DST_HF_CHARM" => [ "DST_HF_CHARM", "JET_EVAL_DST_HF_CHARM"],
     "DST_HF_BOTTOM" => [ "JET_EVAL_DST_HF_BOTTOM", "QA_DST_HF_BOTTOM"],
     "JET_EVAL_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "QA_DST_HF_BOTTOM"],
-    "QA_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "JET_EVAL_DST_HF_BOTTOM"]
+    "QA_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "JET_EVAL_DST_HF_BOTTOM"],
+    "NEWDST_HF_CHARM" => [ "" ],
+    "NEWDST_HF_BOTTOM" => [ "" ]
 
     );
 
@@ -139,7 +141,14 @@ elsif ($system == 6)
 elsif ($system == 7)
 {
     $systemstring = "DST_HF_CHARM_pythia8-";
-    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    if ($dsttype =~ /NEW/)
+    {
+	$topdir = sprintf("%s/FixDST/HF_pp200_signal",$topdir);
+    }
+    else
+    {
+	$topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    }
     $condorfileadd = sprintf("Charm");
 }
 elsif ($system == 8)
@@ -222,6 +231,7 @@ foreach my $rem (keys %removethese)
 }
 foreach my $condorfile (keys %removecondorfiles)
 {
+#    print "checking $condorfile\n";
     if (-f $condorfile)
     {
 	if (defined $kill)
