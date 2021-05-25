@@ -32,6 +32,8 @@ void run_pass2(const std::string &infile, const std::string &outfile = "test3.ro
   out->StripNode("TRKR_HITSET_TMP");
   out->StripNode("TRKR_HITTRUTHASSOC_TMP");
 
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS");
+
   se->registerOutputManager(out);
   se->fileopen("DSTin",infile);
   se->run(evts);
