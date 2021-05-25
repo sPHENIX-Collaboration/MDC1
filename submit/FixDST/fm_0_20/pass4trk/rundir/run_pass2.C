@@ -17,7 +17,6 @@ void run_pass2(const std::string &infile, const std::string &outfile = "test3.ro
   gSystem->Load("libg4dst.so");
   gSystem->Load("libkfparticle_sphenix_io.so");
   Fun4AllServer* se = Fun4AllServer::instance();
-  se->Verbosity(2);
 
   fixdstpass2 *p1 = new fixdstpass2();
 
@@ -33,6 +32,8 @@ void run_pass2(const std::string &infile, const std::string &outfile = "test3.ro
   out->StripNode("TRKR_HITSET_TMP");
   out->StripNode("TRKR_HITTRUTHASSOC_TMP");
 
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS");
+
   se->registerOutputManager(out);
   se->fileopen("DSTin",infile);
   se->run(evts);
@@ -40,8 +41,6 @@ void run_pass2(const std::string &infile, const std::string &outfile = "test3.ro
   delete se;
   Production_CreateOutputDir(outdir);
   Production_MoveOutput(outdir,outfile);
-  cout << "all done" << endl;
-  gSystem->Exit(0);
 }
 
 void Production_CreateOutputDir(const std::string &dirname)
