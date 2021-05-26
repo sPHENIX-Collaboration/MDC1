@@ -15,9 +15,9 @@ void run_pass1(const std::string &infile, const int evts=0)
   gSystem->Load("libg4dst.so");
   gSystem->Load("libkfparticle_sphenix_io.so");
   Fun4AllServer* se = Fun4AllServer::instance();
+  se->Verbosity(1);
 
   fixdstpass1 *p1 = new fixdstpass1();
-
   se->registerSubsystem(p1);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTin");
