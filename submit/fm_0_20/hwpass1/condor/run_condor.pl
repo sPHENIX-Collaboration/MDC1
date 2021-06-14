@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_hwpass1.sh",$rundir);
-y $infile = $ARGV[0];
+my $infile = $ARGV[0];
 my $dstoutfile = $ARGV[1];
 my $residualoutfile = $ARGV[2];
 my $dstoutdir = $ARGV[3];
