@@ -20,20 +20,18 @@ else
     echo condor scratch NOT set
 fi
 # arguments 
-# $1: number of events
-# $2: input file
-# $3: output file
-# $4: residual file
-# $5: output dir
+# $1: input file
+# $2: output file
+# $3: residual file
+# $4: output dir
 
 echo 'here comes your environment'
 printenv
-echo arg1 \(events\) : $1
-echo arg2 \(input DST\) : $2
-echo arg3 \(output DST\) : $3
-echo arg4 \(residual file\) : $4
-echo arg5 \(output dir\) : $5
+echo arg1 \(input DST\) : $1
+echo arg2 \(output DST\) : $2
+echo arg3 \(residual file\) : $3
+echo arg4 \(output dir\) : $4
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_HWTest_pass1.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b Fun4All_G4_sPHENIX_HWTest_pass1.C\($1,\"$2\"\,\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_HWTest_pass1.C\(0,\"$1\",\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b Fun4All_G4_sPHENIX_HWTest_pass1.C\(0,\"$1\"\,\"$2\",\"$3\",\"$4\"\)
 
