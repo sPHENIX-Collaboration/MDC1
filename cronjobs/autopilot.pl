@@ -7,7 +7,7 @@ use Cwd;
 my $submittopdir = "/sphenix/u/sphnxpro/MDC1/submit";
 my @submitdir = ("fm_0_488/pass2_50kHz_0_20fm/condor",
 		 "fm_0_488/pass3calo_50kHz_0_20fm/condor",
-		 "fm_0_488/pass3trk_50kHz_0_20fm/condor",
+#		 "fm_0_488/pass3trk_50kHz_0_20fm/condor",
 		 "fm_0_488/pass4trk_50kHz_0_20fm/condor",
 		 "fm_0_20/pass2/condor",
 		 "fm_0_20/pass3trk/condor",
@@ -28,7 +28,7 @@ foreach my $subdir (@submitdir)
 	print "run_all.pl does not exist in $newdir\n";
 	next;
     }
-    my $submitcmd = sprintf("perl run_all.pl 1000 -inc");
+    my $submitcmd = sprintf("perl run_all.pl 2000 -inc");
     print "executing $submitcmd in $newdir\n";
     system($submitcmd);
 }
