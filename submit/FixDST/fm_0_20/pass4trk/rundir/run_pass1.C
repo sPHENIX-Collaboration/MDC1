@@ -10,7 +10,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfixdstpass1.so)
 
 
-void run_pass1(const std::string &infile, const int evts=10)
+void run_pass1(const std::string &infile, const int evts=0)
 {
   gSystem->Load("libg4dst.so");
   gSystem->Load("libkfparticle_sphenix_io.so");
