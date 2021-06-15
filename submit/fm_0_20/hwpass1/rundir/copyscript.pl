@@ -199,7 +199,14 @@ sub getentries
 	print F "  TFile *f = TFile::Open(fr->location(file));\n";
 	print F "  cout << \"Getting events for \" << file << endl;\n";
 	print F "  TTree *T = (TTree *) f->Get(\"T\");\n";
-	print F "  cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
+	print F "  if (! T)\n";
+	print F "  {\n";
+	print F "    cout << \"Number of Entries: 0\" << endl;\n";
+	print F "  }\n";
+	print F "  else\n";
+	print F "  {\n";
+	print F "    cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
+	print F "  }\n";
 	print F "}\n";
 	print F "#endif\n";
 	close(F);
