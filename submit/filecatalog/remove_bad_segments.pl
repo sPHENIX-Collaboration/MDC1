@@ -40,7 +40,8 @@ my %daughters = (
     "JET_EVAL_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "QA_DST_HF_BOTTOM"],
     "QA_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "JET_EVAL_DST_HF_BOTTOM"],
     "NEWDST_HF_CHARM" => [ "" ],
-    "NEWDST_HF_BOTTOM" => [ "" ]
+    "NEWDST_HF_BOTTOM" => [ "" ],
+    "DSTNEW_TRKR_CLUSTER" => [ "" ]
 
     );
 
@@ -70,7 +71,7 @@ my $segment = $ARGV[0];
 
 if( ! exists $daughters{$dsttype})
 {
-    print "bad dsttype, existing types:\n";
+    print "bad dsttype $dsttype, existing types:\n";
     foreach my $tp (sort keys %daughters)
     {
 	print "$tp\n";
@@ -101,6 +102,7 @@ my %productionsubdir = (
     "DST_CALO_G4HIT"=> "pass2",
     "DST_TRACKS" => "pass4trk",
     "DST_TRKR_CLUSTER" => "pass3trk",
+    "DSTNEW_TRKR_CLUSTER" => "pass3trk",
     "DST_TRKR_G4HIT" => "pass2",
     "DST_TRUTH_G4HIT" => "pass2",
     "DST_VERTEX" => "pass2",
@@ -124,7 +126,14 @@ elsif ($system == 3)
 elsif ($system == 4)
 {
     $systemstring = "sHijing_0_20fm";
-    $topdir = sprintf("%s/fm_0_20",$topdir);
+    if ($dsttype =~ /NEW/)
+    {
+	$topdir = sprintf("%s/FixDST/fm_0_20",$topdir);
+    }
+    else
+    {
+	$topdir = sprintf("%s/fm_0_20",$topdir);
+    }
 }
 elsif ($system == 5)
 {
