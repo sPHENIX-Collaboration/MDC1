@@ -2,10 +2,16 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
+
+my $count;
+
+GetOptions("cnt:i"=>\$count);
 
 if ($#ARGV < 0)
 {
     print "usage: plot_memory.pl <condor logdir>\n";
+    print "-cnt : max number of condor logs to analyze\n";
     exit(1);
 }
 
@@ -42,10 +48,10 @@ while (my $file = <F>)
     }
     close(F1);
     $cnt++;
-if ($cnt > 1000)
- {
-    last;
-}
+    if (defined $count &&  $cnt >= $count)
+    {
+	last;
+    }
 }
 close(F);
 close(F2);

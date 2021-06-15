@@ -2,10 +2,17 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
+
+my $count;
+
+GetOptions("cnt:i"=>\$count);
+
 
 if ($#ARGV < 0)
 {
     print "usage: plot_memory.pl <condor logdir>\n";
+    print "-cnt : max number of condor logs to analyze\n";
     exit(1);
 }
 
@@ -27,25 +34,29 @@ if (-f $runremlist)
     unlink $runremlist;
 }
 
-if (! -f $runremlist)
+my $cnt = 0;
+open(F,"$cmd");
+open(F2,">$runremlist");
+while (my $file = <F>)
 {
-    open(F,"$cmd");
-    open(F2,">$runremlist");
-    while (my $file = <F>)
+    print "file: $file";
+    chomp $file;
+    my $fcmd = sprintf("cat %s | grep 'Run Remote Usage' | ",$file);
+    open(F1,$fcmd);
+    while (my $remline = <F1>)
     {
-	print "file: $file";
-	chomp $file;
-	my $fcmd = sprintf("cat %s | grep 'Run Remote Usage' | ",$file);
-	open(F1,$fcmd);
-	while (my $remline = <F1>)
-	{
-	    print F2 "$remline";
-	}
-	close(F1);
+	print F2 "$remline";
     }
-    close(F);
-    close(F2);
+    close(F1);
+    $cnt++;
+    if (defined $count &&  $cnt >= $count)
+    {
+	last;
+    }
 }
+close(F);
+close(F2);
+
 
 open(F,"$runremlist");
 open(F1,">seconds.list");
