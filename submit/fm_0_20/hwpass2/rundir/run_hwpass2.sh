@@ -7,8 +7,8 @@ echo running: run_hwpass2.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-#    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_20/hwpass2/rundir/* .
-    rsync -av /sphenix/user/pinkenbu/MDC1/submit/fm_0_20/hwpass2/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_20/hwpass2/rundir/* .
+#    rsync -av /sphenix/user/pinkenbu/MDC1/submit/fm_0_20/hwpass2/rundir/* .
 
     getinputfiles.pl $1
     if [ $? -ne 0 ]
