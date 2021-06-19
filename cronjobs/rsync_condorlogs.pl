@@ -29,6 +29,7 @@ push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
 push(@passes,"pass5trk");
 push(@passes,"hwpass1");
+push(@passes,"hwpass2");
 # for FixDST
 my @FixDSTpasses = ();
 push(@FixDSTpasses,"HF_pp200_signal");
