@@ -16,7 +16,7 @@
 #include <G4_ParticleFlow.C>
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
-#include <G4_Tracking_HWTest_pass1.C>
+#include <G4_Tracking_HWTest_pass2.C>
 #include <G4_User.C>
 #include <QA.C>
 
@@ -32,11 +32,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 // For HepMC Hijing
 // try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
 
-int Fun4All_G4_sPHENIX_HWTest_pass1(
-    const int nEvents = 80,
-    const string &inputFile = "DSTNEW_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00001.root",
-    const string &outputFile = "Pass1_out_00001.root",
-    const string &residualfile = "TpcSpaceChargeMatrices.root",
+int Fun4All_G4_sPHENIX_HWTest_pass2(
+    const int nEvents = 90,
+    const string &inputFile = "DSTPASS1_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00001.root",    // output DST file from pass 1
+    const string &outputFile = "Pass2_out_00001.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -241,9 +240,6 @@ int Fun4All_G4_sPHENIX_HWTest_pass1(
   // What to run
   //======================
 
-  // This macro reads in files that contain reconsrructed hits and global objects
-  // It run clustering and tracking starting with the hits files, and writes out a DST
-
   // QA, main switch
   //Enable::QA = true;
 
@@ -260,20 +256,10 @@ int Fun4All_G4_sPHENIX_HWTest_pass1(
 
   // central tracking
   Enable::MVTX = true;
-  Enable::MVTX_CLUSTER =  Enable::MVTX &&  true;
-
   Enable::INTT = true;
-  Enable::INTT_CLUSTER =  Enable::INTT && true;
-
   Enable::TPC = true;
-  Enable::TPC_CLUSTER =  Enable::TPC && true;
-
   Enable::MICROMEGAS = true;
-  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS && true;
-
   Enable::TRACKING_TRACK = true;
-  G4TRACKING::ResidualName = residualfile;
-  //Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
 
   //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
   //  into the tracking, cannot run together with CEMC
@@ -322,7 +308,7 @@ int Fun4All_G4_sPHENIX_HWTest_pass1(
   Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
   //Enable::JETS = true;
-  Enable::JETS_EVAL = Enable::JETS && true;
+  //Enable::JETS_EVAL = Enable::JETS && true;
   Enable::JETS_QA = Enable::JETS and Enable::QA && true;
 
   // HI Jet Reco for p+Au / Au+Au collisions (default is false for
@@ -354,7 +340,7 @@ int Fun4All_G4_sPHENIX_HWTest_pass1(
   //---------------
 
   //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
+  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
   G4MAGNET::magfield_rescale = -1.4 / 1.5;  // make consistent with expected Babar field strength of 1.4T
 
   //---------------
@@ -582,13 +568,11 @@ int Fun4All_G4_sPHENIX_HWTest_pass1(
   //-----
   se->PrintTimer();
   se->End();
-
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput(outputFile);
-    Production_MoveOutput(residualfile);
   }
 
   gSystem->Exit(0);
