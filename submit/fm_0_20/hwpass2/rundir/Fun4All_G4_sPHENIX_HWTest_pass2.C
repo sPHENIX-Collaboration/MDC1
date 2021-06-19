@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 // try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
 
 int Fun4All_G4_sPHENIX_HWTest_pass2(
-    const int nEvents = 90,
+    const int nEvents = 0,
     const string &inputFile = "DSTPASS1_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000001-00001.root",    // output DST file from pass 1
     const string &outputFile = "Pass2_out_00001.root",
     const string &outdir = ".")
