@@ -18,7 +18,7 @@ if ($#ARGV < 3)
 my $localdir=`pwd`;
 chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_hwpass1.sh",$rundir);
+my $executable = sprintf("%s/run_hwpass2.sh",$rundir);
 my $infile = $ARGV[0];
 my $dstoutfile = $ARGV[1];
 my $dstoutdir = $ARGV[2];
@@ -27,7 +27,7 @@ my $sequence = $ARGV[4];
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/hwpass1");
+my $condorlogdir = sprintf("/tmp/fm_0_20/hwpass2");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
