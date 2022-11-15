@@ -6,7 +6,15 @@ use Getopt::Long;
 
 my $submit;
 GetOptions("submit"=>\$submit);
-
+if ($#ARGV < 1)
+{
+    print "usage: run_hijing.pl <number of new files> <fm range>\n";
+    print "parameters:\n";
+    print "-submit : submit condor jobs\n";
+    exit(1);
+}
+my $add_files = $ARGV[0];
+my $fm_range = $ARGV[1];
 my $runnumber = 1;
 my $evt_per_file = 10000;
 my $total_events = 10000000;
@@ -17,22 +25,44 @@ mkpath($condorlogdir);
 mkpath($condoroutdir);
 mkpath($outputdir);
 my $maxnum=hex('0xFFFFFFFF');
-my %used_seed = ();
+my %used_seeds = ();
 
-while ((keys %used_seed) < $total_events/$evt_per_file)
+#open old logs and extract and store the seeds so we do not reuse them
+open(F,"find /sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/log -name 'sHijing_$fm_range-*.out' |");
+while (my $outfile = <F>)
 {
-    $used_seed{int(rand($maxnum))} = 1;
+    chomp $outfile;
+    my $seed = `cat $outfile | grep seed | grep arg`;
+    chomp $seed;
+    my @sp1 = split(/ /,$seed);
+    $used_seeds{$#sp1} = $outfile;
 }
-my $nseeds = keys %used_seed;
 my $segment = 0;
-foreach my $seed (keys %used_seed)
+for (my $i = 0; $i < $add_files; $i++)
 {
-    my $condorlog = sprintf("%s/sHijing_0_20fm-%010d-%05d.log", $condorlogdir,$runnumber,$segment);
-    my $condorout = sprintf("%s/sHijing_0_20fm-%010d-%05d.out",$condoroutdir,$runnumber,$segment);
-    my $condorerr = sprintf("%s/sHijing_0_20fm-%010d-%05d.err",$condoroutdir,$runnumber,$segment);
-    my $datfile = sprintf("sHijing_0_20fm-%010d-%05d.dat",$runnumber, $segment);
+    my $datfile;
+    my $fulldatfile;
+    my $condorlog;
+    my $condorout;
+    my $condorerr;
+    do
+    {
+	$datfile = sprintf("sHijing_0_20fm-%010d-%05d.dat",$runnumber, $segment);
+	$condorlog = sprintf("%s/sHijing_0_20fm-%010d-%05d.log", $condorlogdir,$runnumber,$segment);
+	$condorout = sprintf("%s/sHijing_0_20fm-%010d-%05d.out",$condoroutdir,$runnumber,$segment);
+	$condorerr = sprintf("%s/sHijing_0_20fm-%010d-%05d.err",$condoroutdir,$runnumber,$segment);
+	$fulldatfile = sprintf("%s/%s",$outputdir,$datfile);
+	$segment++;
+    }
+    while (-f $fulldatfile);
+    my $seed;
+    do
+    {
+	$seed = int(rand($maxnum));
+    }
+    while (exists $used_seeds{$seed});
+    $used_seeds{$seed} = $condorout;
     my $condorcmd = sprintf("condor_submit condor.job -a \"output = %s\" -a \"error = %s\"  -a \"Log = %s\" -a \"Arguments = %d %d %s %s\"",$condorout, $condorerr, $condorlog,$evt_per_file, $seed, $datfile, $outputdir);
-    $segment++;
     if (! defined $submit)
     {
 	print "would issue $condorcmd\n";
@@ -42,8 +72,4 @@ foreach my $seed (keys %used_seed)
 	print "$condorcmd\n";
 	system($condorcmd);
     }
-}
-if (! defined $submit)
-{
-    print "\n\nuse perl run_hijing.pl -submit to submit condor jobs\n\n";
 }
