@@ -1,1 +1,1 @@
-/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_pp/G4Hits/data
+/sphenix/sim/sim01/sphnxpro/MDC2/pythia8_pp/G4Hits/data

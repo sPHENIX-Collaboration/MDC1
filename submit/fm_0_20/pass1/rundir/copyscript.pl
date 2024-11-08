@@ -178,9 +178,6 @@ sub getmd5
 sub getentries
 {
 #write stupid macro to get events
-# this one is modified to work with mdc1.1, libffaobjects.so is missing
-# from libg4dst.so, FROG::location() returns an stl string, while
-# TFile::Open() needs a const char *, so this adds .c_str()
     if (! -f "GetEntries.C")
     {
 	open(F,">GetEntries.C");
@@ -192,7 +189,6 @@ sub getentries
 	print F "{\n";
 	print F "  gSystem->Load(\"libFROG.so\");\n";
 	print F "  gSystem->Load(\"libg4dst.so\");\n";
-	print F "  gSystem->Load(\"libffaobjects.so\");\n";
 	print F "  // prevent root to start gdb-backtrace.sh\n";
 	print F "  // in case of crashes, it hangs the condor job\n";
 	print F "  for (int i = 0; i < kMAXSIGNALS; i++)\n";
@@ -200,7 +196,7 @@ sub getentries
 	print F "     gSystem->IgnoreSignal((ESignals)i);\n";
 	print F "  }\n";
 	print F "  FROG *fr = new FROG();\n";
-	print F "  TFile *f = TFile::Open(fr->location(file).c_str());\n";
+	print F "  TFile *f = TFile::Open(fr->location(file));\n";
 	print F "  cout << \"Getting events for \" << file << endl;\n";
 	print F "  TTree *T = (TTree *) f->Get(\"T\");\n";
 	print F "  cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";

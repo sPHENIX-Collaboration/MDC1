@@ -19,7 +19,8 @@ if ($#ARGV < 0)
 
 
 my $maxsubmit = $ARGV[0];
-my $runnumber = 1;
+my $pythia_runnumber = 1;
+my $runnumber = 2;
 my $events = 1000;
 my $evtsperfile = 100000;
 my $nmax = $evtsperfile;
@@ -31,7 +32,7 @@ mkpath($outdir);
 my $nsubmit = 0;
 for (my $segment=0; $segment<100; $segment++)
 {
-    my $pythia8datfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_HepMC/data/pythia8_mb-%010d-%05d.dat",$runnumber, $segment);
+    my $pythia8datfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_HepMC/data/pythia8_mb-%010d-%05d.dat",$pythia_runnumber, $segment);
     if (! -f $pythia8datfile)
     {
 	print "could not locate $pythia8datfile\n";

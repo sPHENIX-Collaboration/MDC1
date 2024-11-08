@@ -37,7 +37,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select events from datasets where filename = ?");
 my $updateevents =  $dbh->prepare("update datasets set events=? where filename=?") || die $DBI::error;
 
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'DST_TRKR_CLUSTER' and (events is null or events < 0) and filename like '%0_12fm%' order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'MDC13_DST_TRKR_CLUSTER' and (events is null or events < 0) and filename like '%0_12fm%' order by filename") || die $DBI::error;
 
 $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())

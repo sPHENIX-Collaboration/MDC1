@@ -42,6 +42,7 @@ while (my $file = <F>)
     my $lfn = basename($file);
     my $needinsert = 1;
 #    print "checking $lfn\n";
+
     $chkfile->execute($lfn);
     while(my @res = $chkfile->fetchrow_array())
     {

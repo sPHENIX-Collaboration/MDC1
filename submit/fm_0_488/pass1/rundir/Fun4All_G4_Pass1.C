@@ -92,6 +92,8 @@ int Fun4All_G4_Pass1(
 
   if (Input::HEPMC)
   {
+    //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
+    Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
     INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(0.02, 0.02, 7.5, 0);  //collision vertex from CAD (sigma = 200um in x/y, 7.5cm in z)
                                                                                            //    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
     // //optional choice of vertex distribution function in space, time
@@ -161,8 +163,11 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
+  //Enable::BEAMLINE = true;
+
+  //Enable::ZDC = true;
   //! forward flux return plug door. Out of acceptance and off by default.
-  Enable::PLUGDOOR = true;
+  //Enable::PLUGDOOR = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -173,7 +178,7 @@ int Fun4All_G4_Pass1(
   //---------------
   // World Settings
   //---------------
-  G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
+  //G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
   //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
 
   //---------------
@@ -182,7 +187,7 @@ int Fun4All_G4_Pass1(
 
   //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
   //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-  G4MAGNET::magfield_rescale = -1.4 / 1.5;  // make consistent with expected Babar field strength of 1.4T
+//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
 
 
   // Initialize the selected subsystems

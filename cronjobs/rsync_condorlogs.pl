@@ -5,11 +5,11 @@ use warnings;
 
 sub dir_is_empty;
 
-my $submitdir = "/sphenix/u/sphnxpro/MDC1/submit";
+my $submitdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my %condorlogs = ();
 my @fmrange = ();
 push(@fmrange,"fm_0_488");
-push(@fmrange,"fm_0_12");
+#push(@fmrange,"fm_0_12");
 push(@fmrange,"fm_0_20");
 push(@fmrange,"HF_pp200_signal");
 push(@fmrange,"pythia8_pp_mb");

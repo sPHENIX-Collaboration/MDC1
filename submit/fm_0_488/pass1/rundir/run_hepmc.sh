@@ -2,7 +2,7 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.1
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
 
 echo running: run_hepmc.sh $*
 

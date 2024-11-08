@@ -18,12 +18,21 @@ if ($#ARGV < 0)
     exit(1);
 }
 
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
+    exit(1);
+}
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
 my $maxsubmit = $ARGV[0];
-my $runnumber = 1;
+my $hijing_runnumber = 1;
+my $runnumber = 2;
 my $events = 50;
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
@@ -35,7 +44,7 @@ mkpath($outdir);
 my $nsubmit = 0;
 for (my $segment=0; $segment<1000; $segment++)
 {
-    my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_488fm-%010d-%05d.dat",$runnumber, $segment);
+    my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_488fm-%010d-%05d.dat",$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
     {
 	print "could not locate $hijingdatfile\n";
